@@ -11,8 +11,9 @@ import {createXYZ} from 'ol/tilegrid';
  */
 class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
     constructor(layerDefinition) {
+        console.log(layerDefinition);
         const getFeatureSize = (feature) => {
-            if (feature.get('cluster')) {
+            if (feature.get('clustered')) {
                 return feature.get('point_count'); 
             }else {
                 return 1;
