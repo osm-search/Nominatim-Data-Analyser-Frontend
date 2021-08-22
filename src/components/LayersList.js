@@ -46,9 +46,11 @@ const LayersList = ( { selectedLayer, setSelectedLayer } ) => {
         if (layersURL) {
             for (const layerURL of layersURL.layers) {
                 const layerData = await (await fetch(layerURL, requestInit)).json()
-                //Set the id to an unique id.
-                layerData['id'] = layersURL.layers.indexOf(layerURL);
-                loadedLayers.push(layerData)
+                if (layerData) {
+                    //Set the id to an unique id.
+                    layerData['id'] = layersURL.layers.indexOf(layerURL);
+                    loadedLayers.push(layerData);
+                }
             }
             setLayers(loadedLayers);
         }

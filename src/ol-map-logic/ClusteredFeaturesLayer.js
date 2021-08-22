@@ -22,11 +22,11 @@ class ClusteredFeaturesLayer {
         this.greenFill = new Fill({color:"rgba(0,128,0,1)"});
         this.orangeFill = new Fill({color:"rgba(255,128,0,1)"});
         this.redFill = new Fill({color:"rgba(192,0,0,1)"});
-        this.singleIconStyle = new Style({
-            image: new Icon({
-                src: LocationPin,
-                scale: 1.2
-              }),
+        this.singlePointStyle = new Style({
+            image: new Circle({
+                radius: 8,
+                fill: new Fill({color:"rgba(66, 117, 245,0.8)"})
+            })
         });
         this.styleCache = {};
     }
@@ -51,7 +51,7 @@ class ClusteredFeaturesLayer {
         var style = this.styleCache[size];
         if (!style) {
             if (size === 1) {
-                style = this.styleCache[size] = this.singleIconStyle;
+                style = this.styleCache[size] = this.singlePointStyle;
             }else {
                 const color = size>this.bigSize ? '192,0,0' : size>this.mediumSize ? '255,128,0' : '0,128,0';
                 var radius = Math.max(8, Math.min(size*0.15, 20));
