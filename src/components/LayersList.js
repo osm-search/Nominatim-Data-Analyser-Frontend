@@ -41,19 +41,22 @@ const LayersList = ( { selectedLayer, setSelectedLayer } ) => {
             method: 'GET',
             cache: 'no-cache'
         };
-        const layersURL = await (await fetch(`${config.WEB_PATH}/layers.json`, requestInit)).json();
-        const loadedLayers = []
-        if (layersURL) {
-            for (const layerURL of layersURL.layers) {
-                const layerData = await (await fetch(layerURL, requestInit)).json()
-                if (layerData) {
+        const layersResponse = await fetch(`${config.WEB_PATH}/layers.json`, requestInit);
+        if (layersResponse.ok) {
+            const layersList = await layersResponse.json();
+            const loadedLayers = []
+            for (const layerURL of layersList.layers) {
+                const layerResponse = await fetch(layerURL, requestInit);
+                if (layerResponse.ok) {
+                    const layerData = await layerResponse.json();
                     //Set the id to an unique id.
-                    layerData['id'] = layersURL.layers.indexOf(layerURL);
+                    layerData['id'] = layersList.layers.indexOf(layerURL);
                     loadedLayers.push(layerData);
                 }
             }
             setLayers(loadedLayers);
         }
+ 
     }
 
     return (
