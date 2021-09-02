@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import URLStateManager from "../ol-map-logic/URLStateManager.js";
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import OSM from 'ol/source/OSM';
@@ -23,20 +24,23 @@ const MapContainer = ( { selectedLayer } ) => {
      * State containing the current OpenLayers layer of features. Its reference
      * is needed to remove it from the map when the selected layer change.
      */
-    const [currentOlFeaturesLayer, setCurrentOlFeaturesLayer] = useState(null);
+    const [currentOlFeaturesLayer, setCurrentOlFeaturesLayer] = useState();
     /**
      * Current feature layer which contains the layer data extracted from the remote server.
      */
-    const [currentFeaturesLayer, setCurrentFeaturesLayer] = useState(null);
+    const [currentFeaturesLayer, setCurrentFeaturesLayer] = useState();
     /**
      * OpenLayers map overlay displayed when clicking on a feature.
      */
-    const [overlay, setOverlay] = useState(null);
+    const [overlay, setOverlay] = useState();
     /**
      * Key of the event binding for the map.on('click). Used to reset the click event
      * when we want to change the callback.
      */
-    const [clickBindKey, setClickBindKey] = useState(null);
+    const [clickBindKey, setClickBindKey] = useState();
+
+    const urlStateManager = useRef(new URLStateManager());
+
     const mapContainer = useRef();
     const popup = useRef();
     const popupCloser = useRef();
@@ -46,6 +50,8 @@ const MapContainer = ( { selectedLayer } ) => {
      * When the component is loaded, we initialize the openlayers map and overlay.
      */
     useEffect(() => {
+        urlStateManager.current.loadState();
+
         const overlay = new Overlay({
             element: popup.current,
             autoPan: true,
@@ -69,6 +75,9 @@ const MapContainer = ( { selectedLayer } ) => {
                 minZoom: 1
             })
         })
+
+        setMapViewFromState(initialMap);
+        initialMap.on('moveend', () => urlStateManager.current.setMapState(initialMap)); 
         setMap(initialMap);
 
         popupCloser.current.onclick = function () {
@@ -90,11 +99,14 @@ const MapContainer = ( { selectedLayer } ) => {
             }
             overlay.setPosition(undefined);
             if (selectedLayer) {
+                urlStateManager.current.setLayerState(selectedLayer.id);
                 const featureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
                 setCurrentFeaturesLayer(featureLayer);
                 const olFeaturesLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer).olLayer;
                 setCurrentOlFeaturesLayer(olFeaturesLayer);
                 map.addLayer(olFeaturesLayer);
+            }else {
+                urlStateManager.current.setLayerState(null);
             }
         }
     }, [selectedLayer])
@@ -111,6 +123,21 @@ const MapContainer = ( { selectedLayer } ) => {
             setClickBindKey(map.on(['click'], onMapClick));
         }
     }, [currentFeaturesLayer])
+
+    /**
+     * Set the map view center/zoom/rotation to the values stored in the URL state.
+     */
+    const setMapViewFromState = (map) => {
+        if (urlStateManager.current.state.viewCenter) {
+            map.getView().setCenter(urlStateManager.current.state.viewCenter);
+        }
+        if (urlStateManager.current.state.viewZoom) {
+            map.getView().setZoom(urlStateManager.current.state.viewZoom);
+        }
+        if (urlStateManager.current.state.viewRotation) {
+            map.getView().setRotation(urlStateManager.current.state.viewRotation);
+        }
+    }
 
     /**
      * Called whenever the map is clicked.

@@ -6,7 +6,7 @@ import MenuIcon from './assets/icons/menu.svg';
 import InformationPanel from './components/InformationPanel';
 
 function App() {
-  const [selectedLayer, setSelectedLayer] = useState(null);
+  const [selectedLayer, setSelectedLayer] = useState();
   const [isMenuToggle, setMenuToggle] = useState(true);
   const [isInfoPanelDisplayed, setInfoPanelDisplayed] = useState(true);
 
