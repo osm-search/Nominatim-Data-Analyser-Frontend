@@ -8,6 +8,7 @@ import View from 'ol/View';
 import FeaturesLayerFactory from "../ol-map-logic/FeaturesLayerFactory";
 import {unByKey} from 'ol/Observable';
 import Overlay from 'ol/Overlay';
+import {useGeographic as geographicProj} from 'ol/proj';
 import CrossIcon from '../assets/icons/cross.svg';
 
 /**
@@ -46,12 +47,17 @@ const MapContainer = ( { selectedLayer } ) => {
     const popupCloser = useRef();
     const popupContent = useRef();
 
+
     /**
      * When the component is loaded, we initialize the openlayers map and overlay.
      */
     useEffect(() => {
-        urlStateManager.current.loadState();
+        //Calling the useGeographic function in the 'ol/proj' module makes it so 
+        //the map view uses geographic coordinates (even if the view projection is not geographic).
+        geographicProj();
 
+        urlStateManager.current.loadState();
+    
         const overlay = new Overlay({
             element: popup.current,
             autoPan: true,
@@ -71,8 +77,7 @@ const MapContainer = ( { selectedLayer } ) => {
             target: mapContainer.current,
             view: new View({
                 center: [0, 0],
-                zoom: 1,
-                minZoom: 1
+                zoom: 0,
             })
         })
 
@@ -99,7 +104,7 @@ const MapContainer = ( { selectedLayer } ) => {
             }
             overlay.setPosition(undefined);
             if (selectedLayer) {
-                urlStateManager.current.setLayerState(selectedLayer.id);
+                urlStateManager.current.setLayerState(selectedLayer.name);
                 const featureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
                 setCurrentFeaturesLayer(featureLayer);
                 const olFeaturesLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer).olLayer;
