@@ -40,13 +40,10 @@ const MapContainer = ( { selectedLayer } ) => {
      */
     const [clickBindKey, setClickBindKey] = useState();
 
-    const urlStateManager = useRef(new URLStateManager());
-
     const mapContainer = useRef();
     const popup = useRef();
     const popupCloser = useRef();
     const popupContent = useRef();
-
 
     /**
      * When the component is loaded, we initialize the openlayers map and overlay.
@@ -55,8 +52,6 @@ const MapContainer = ( { selectedLayer } ) => {
         //Calling the useGeographic function in the 'ol/proj' module makes it so 
         //the map view uses geographic coordinates (even if the view projection is not geographic).
         geographicProj();
-
-        urlStateManager.current.loadState();
     
         const overlay = new Overlay({
             element: popup.current,
@@ -77,12 +72,13 @@ const MapContainer = ( { selectedLayer } ) => {
             target: mapContainer.current,
             view: new View({
                 center: [0, 0],
-                zoom: 0,
+                zoom: 0
             })
         })
 
+        //Manually set the map view from the initial state when the page just loaded.
         setMapViewFromState(initialMap);
-        initialMap.on('moveend', () => urlStateManager.current.setMapState(initialMap)); 
+        initialMap.on('moveend', () => URLStateManager.getInstance().setMapState(initialMap)); 
         setMap(initialMap);
 
         popupCloser.current.onclick = function () {
@@ -104,14 +100,14 @@ const MapContainer = ( { selectedLayer } ) => {
             }
             overlay.setPosition(undefined);
             if (selectedLayer) {
-                urlStateManager.current.setLayerState(selectedLayer.name);
+                URLStateManager.getInstance().setLayerState(selectedLayer.name);
                 const featureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
                 setCurrentFeaturesLayer(featureLayer);
                 const olFeaturesLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer).olLayer;
                 setCurrentOlFeaturesLayer(olFeaturesLayer);
                 map.addLayer(olFeaturesLayer);
             }else {
-                urlStateManager.current.setLayerState(null);
+                URLStateManager.getInstance().setLayerState(null);
             }
         }
     }, [selectedLayer])
@@ -130,18 +126,11 @@ const MapContainer = ( { selectedLayer } ) => {
     }, [currentFeaturesLayer])
 
     /**
-     * Set the map view center/zoom/rotation to the values stored in the URL state.
+     * Set the map view center/zoom to the values stored in the URL state.
      */
     const setMapViewFromState = (map) => {
-        if (urlStateManager.current.state.viewCenter) {
-            map.getView().setCenter(urlStateManager.current.state.viewCenter);
-        }
-        if (urlStateManager.current.state.viewZoom) {
-            map.getView().setZoom(urlStateManager.current.state.viewZoom);
-        }
-        if (urlStateManager.current.state.viewRotation) {
-            map.getView().setRotation(urlStateManager.current.state.viewRotation);
-        }
+        map.getView().setCenter(URLStateManager.getInstance().state.viewCenter);
+        map.getView().setZoom(URLStateManager.getInstance().state.viewZoom);
     }
 
     /**

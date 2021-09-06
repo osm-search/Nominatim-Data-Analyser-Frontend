@@ -26,10 +26,8 @@ const LayersList = ( { selectedLayer, setSelectedLayer } ) => {
     }, [])
 
     useEffect(() => {
-        const urlStateManager = new URLStateManager();
-        urlStateManager.loadState();
+        const urlStateManager = URLStateManager.getInstance();
         if (urlStateManager.state.layerName) {
-            console.log(decodeURI(urlStateManager.state.layerName));
             const layer = layers.find(l => l.name === decodeURI(urlStateManager.state.layerName));
             setSelectedLayer(layer);
         }

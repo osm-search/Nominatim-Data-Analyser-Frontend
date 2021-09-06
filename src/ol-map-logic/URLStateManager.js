@@ -1,14 +1,28 @@
+import {format} from 'ol/coordinate';
+
 export default class URLStateManager {
     constructor() {
-        this.state = {          
-            viewZoom: 0,
-            viewCenter: [0, 0],
-            layerName: null
+        if (!URLStateManager._instance) {
+            this.state = {          
+                viewZoom: 0,
+                viewCenter: [0, 0],
+                layerName: null
+            }
+            this._loadState();
+            return this;
         }
+        return URLStateManager._instance;
     }
 
-    loadState() {
-        const hash = window.location.hash.replace('#map=', '').replace('#layer=', '/');
+    static getInstance() {
+        if (!URLStateManager._instance) {
+            URLStateManager._instance = new URLStateManager();
+        }
+        return URLStateManager._instance;
+    }
+
+    _loadState() {
+        const hash = window.location.hash.replace('#map=', '').replace('?layer=', '/');
         const hashParts = hash.split('/');
         if (hashParts.length >= 3) {
             //Parse the layer name
@@ -19,7 +33,6 @@ export default class URLStateManager {
             if (hashParts.every((e) => !isNaN(e))) {
                 this.state.viewZoom = parseFloat(hashParts[0]);
                 this.state.viewCenter = [parseFloat(hashParts[2]), parseFloat(hashParts[1])];
-                this.state.layerID = parseFloat(hashParts[3]);
             }
         }
     }
@@ -29,13 +42,11 @@ export default class URLStateManager {
             '#map=' +
             this.state.viewZoom.toFixed(2) +
             '/' +
-            this.state.viewCenter[1].toFixed(2) +
-            '/' +
-            this.state.viewCenter[0].toFixed(2);
+            format(this.state.viewCenter, '{y}/{x}', 2);
         if (this.state.layerName) {
-            hash += '#layer=' + this.state.layerName;
+            hash += '?layer=' + this.state.layerName;
         }
-        window.history.pushState(this.state, 'map', hash);
+        window.history.replaceState(this.state, 'state', hash);
     }
 
     setMapState(map) {
