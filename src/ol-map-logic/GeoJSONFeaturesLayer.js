@@ -23,7 +23,7 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
     get olLayer() {
         const layer = new VectorLayer({
             source: new Cluster({
-                distance: 80,
+                distance: 0.0005,
                 source: new SourceVector({
                     url: this.source_url + '?time='+ new Date().getTime(),
                     format: new GeoJSON()
