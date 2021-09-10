@@ -6,7 +6,7 @@ export default class URLStateManager {
             this.state = {          
                 viewZoom: 0,
                 viewCenter: [0, 0],
-                layerName: null
+                layerID: null
             }
             this._loadState();
             return this;
@@ -22,12 +22,12 @@ export default class URLStateManager {
     }
 
     _loadState() {
-        const hash = window.location.hash.replace('#map=', '').replace('?layer=', '/');
+        const hash = window.location.hash.replace('#map=', '').replace('&layer=', '/');
         const hashParts = hash.split('/');
         if (hashParts.length >= 3) {
             //Parse the layer name
             if (hashParts.length === 4) {
-                this.state.layerName = hashParts.pop();
+                this.state.layerID = hashParts.pop();
             }
             //Parse the map state.
             if (hashParts.every((e) => !isNaN(e))) {
@@ -43,8 +43,8 @@ export default class URLStateManager {
             this.state.viewZoom.toFixed(2) +
             '/' +
             format(this.state.viewCenter, '{y}/{x}', 2);
-        if (this.state.layerName) {
-            hash += '?layer=' + this.state.layerName;
+        if (this.state.layerID) {
+            hash += '&layer=' + this.state.layerID;
         }
         window.history.replaceState(this.state, 'state', hash);
     }
@@ -56,8 +56,8 @@ export default class URLStateManager {
         this.writeState();
     }
 
-    setLayerState(layerName) {
-        this.state.layerName = layerName;
+    setLayerState(layerID) {
+        this.state.layerID = layerID;
         this.writeState();
     }
 }

@@ -100,7 +100,7 @@ const MapContainer = ( { selectedLayer } ) => {
             }
             overlay.setPosition(undefined);
             if (selectedLayer) {
-                URLStateManager.getInstance().setLayerState(selectedLayer.name);
+                URLStateManager.getInstance().setLayerState(selectedLayer.id);
                 const featureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
                 setCurrentFeaturesLayer(featureLayer);
                 const olFeaturesLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer).olLayer;

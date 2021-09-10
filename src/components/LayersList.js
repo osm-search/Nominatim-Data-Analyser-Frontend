@@ -27,8 +27,8 @@ const LayersList = ( { selectedLayer, setSelectedLayer } ) => {
 
     useEffect(() => {
         const urlStateManager = URLStateManager.getInstance();
-        if (urlStateManager.state.layerName) {
-            const layer = layers.find(l => l.name === decodeURI(urlStateManager.state.layerName));
+        if (urlStateManager.state.layerID) {
+            const layer = layers.find(l => l.id === decodeURI(urlStateManager.state.layerID));
             setSelectedLayer(layer);
         }
     }, [layers])
@@ -58,8 +58,6 @@ const LayersList = ( { selectedLayer, setSelectedLayer } ) => {
                 const layerResponse = await fetch(layerURL, requestInit);
                 if (layerResponse.ok) {
                     const layerData = await layerResponse.json();
-                    //Set the id to an unique id.
-                    layerData['id'] = layersList.layers.indexOf(layerURL);
                     loadedLayers.push(layerData);
                 }
             }
