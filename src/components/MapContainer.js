@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import URLStateManager from "../ol-map-logic/URLStateManager.js";
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import OSM from 'ol/source/OSM';
@@ -7,6 +8,7 @@ import View from 'ol/View';
 import FeaturesLayerFactory from "../ol-map-logic/FeaturesLayerFactory";
 import {unByKey} from 'ol/Observable';
 import Overlay from 'ol/Overlay';
+import {useGeographic as geographicProj} from 'ol/proj';
 import CrossIcon from '../assets/icons/cross.svg';
 
 /**
@@ -23,20 +25,21 @@ const MapContainer = ( { selectedLayer } ) => {
      * State containing the current OpenLayers layer of features. Its reference
      * is needed to remove it from the map when the selected layer change.
      */
-    const [currentOlFeaturesLayer, setCurrentOlFeaturesLayer] = useState(null);
+    const [currentOlFeaturesLayer, setCurrentOlFeaturesLayer] = useState();
     /**
      * Current feature layer which contains the layer data extracted from the remote server.
      */
-    const [currentFeaturesLayer, setCurrentFeaturesLayer] = useState(null);
+    const [currentFeaturesLayer, setCurrentFeaturesLayer] = useState();
     /**
      * OpenLayers map overlay displayed when clicking on a feature.
      */
-    const [overlay, setOverlay] = useState(null);
+    const [overlay, setOverlay] = useState();
     /**
      * Key of the event binding for the map.on('click). Used to reset the click event
      * when we want to change the callback.
      */
-    const [clickBindKey, setClickBindKey] = useState(null);
+    const [clickBindKey, setClickBindKey] = useState();
+
     const mapContainer = useRef();
     const popup = useRef();
     const popupCloser = useRef();
@@ -46,6 +49,10 @@ const MapContainer = ( { selectedLayer } ) => {
      * When the component is loaded, we initialize the openlayers map and overlay.
      */
     useEffect(() => {
+        //Calling the useGeographic function in the 'ol/proj' module makes it so 
+        //the map view uses geographic coordinates (even if the view projection is not geographic).
+        geographicProj();
+    
         const overlay = new Overlay({
             element: popup.current,
             autoPan: true,
@@ -65,10 +72,13 @@ const MapContainer = ( { selectedLayer } ) => {
             target: mapContainer.current,
             view: new View({
                 center: [0, 0],
-                zoom: 1,
-                minZoom: 1
+                zoom: 0
             })
         })
+
+        //Manually set the map view from the initial state when the page just loaded.
+        setMapViewFromState(initialMap);
+        initialMap.on('moveend', () => URLStateManager.getInstance().setMapState(initialMap)); 
         setMap(initialMap);
 
         popupCloser.current.onclick = function () {
@@ -90,11 +100,14 @@ const MapContainer = ( { selectedLayer } ) => {
             }
             overlay.setPosition(undefined);
             if (selectedLayer) {
+                URLStateManager.getInstance().setLayerState(selectedLayer.id);
                 const featureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
                 setCurrentFeaturesLayer(featureLayer);
                 const olFeaturesLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer).olLayer;
                 setCurrentOlFeaturesLayer(olFeaturesLayer);
                 map.addLayer(olFeaturesLayer);
+            }else {
+                URLStateManager.getInstance().setLayerState(null);
             }
         }
     }, [selectedLayer])
@@ -111,6 +124,14 @@ const MapContainer = ( { selectedLayer } ) => {
             setClickBindKey(map.on(['click'], onMapClick));
         }
     }, [currentFeaturesLayer])
+
+    /**
+     * Set the map view center/zoom to the values stored in the URL state.
+     */
+    const setMapViewFromState = (map) => {
+        map.getView().setCenter(URLStateManager.getInstance().state.viewCenter);
+        map.getView().setZoom(URLStateManager.getInstance().state.viewZoom);
+    }
 
     /**
      * Called whenever the map is clicked.

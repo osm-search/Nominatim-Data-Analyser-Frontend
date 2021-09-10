@@ -1,5 +1,6 @@
 import { trackPromise } from 'react-promise-tracker';
 import { useEffect, useState } from 'react';
+import URLStateManager from "../ol-map-logic/URLStateManager.js";
 import config from '../config/config.json';
 import Layer from './Layer';
 import LoadingIndicator from './LoadingIndicator';
@@ -23,6 +24,14 @@ const LayersList = ( { selectedLayer, setSelectedLayer } ) => {
     useEffect(() => {
         loadAndWaitLayers()
     }, [])
+
+    useEffect(() => {
+        const urlStateManager = URLStateManager.getInstance();
+        if (urlStateManager.state.layerID) {
+            const layer = layers.find(l => l.id === decodeURI(urlStateManager.state.layerID));
+            setSelectedLayer(layer);
+        }
+    }, [layers])
 
     /**
      * Wrapper function needed to track all the promises (with trackPromise()) 
@@ -49,8 +58,6 @@ const LayersList = ( { selectedLayer, setSelectedLayer } ) => {
                 const layerResponse = await fetch(layerURL, requestInit);
                 if (layerResponse.ok) {
                     const layerData = await layerResponse.json();
-                    //Set the id to an unique id.
-                    layerData['id'] = layersList.layers.indexOf(layerURL);
                     loadedLayers.push(layerData);
                 }
             }
