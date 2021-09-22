@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import URLStateManager from "../ol-map-logic/URLStateManager.js";
 import 'ol/ol.css';
 import Map from 'ol/Map';
@@ -6,7 +6,6 @@ import OSM from 'ol/source/OSM';
 import TileLayer from 'ol/layer/Tile';
 import View from 'ol/View';
 import FeaturesLayerFactory from "../ol-map-logic/FeaturesLayerFactory";
-import {unByKey} from 'ol/Observable';
 import Overlay from 'ol/Overlay';
 import {useGeographic as geographicProj} from 'ol/proj';
 import CrossIcon from '../assets/icons/cross.svg';
@@ -18,28 +17,22 @@ import CrossIcon from '../assets/icons/cross.svg';
  */
 const MapContainer = ( { selectedLayer } ) => {
     /**
-     * State containing the Openlayers map.
+     * Reference containing the Openlayers map.
      */
-    const [map, setMap] = useState();
+    const map = useRef();
     /**
      * State containing the current OpenLayers layer of features. Its reference
      * is needed to remove it from the map when the selected layer change.
      */
-    const [currentOlFeaturesLayer, setCurrentOlFeaturesLayer] = useState();
+    const currentOlFeaturesLayer = useRef();
     /**
      * Current feature layer which contains the layer data extracted from the remote server.
      */
-    const [currentFeaturesLayer, setCurrentFeaturesLayer] = useState();
+    const currentFeaturesLayer = useRef();
     /**
      * OpenLayers map overlay displayed when clicking on a feature.
      */
-    const [overlay, setOverlay] = useState();
-    /**
-     * Key of the event binding for the map.on('click). Used to reset the click event
-     * when we want to change the callback.
-     */
-    const [clickBindKey, setClickBindKey] = useState();
-
+    const overlay = useRef();
     const mapContainer = useRef();
     const popup = useRef();
     const popupCloser = useRef();
@@ -53,22 +46,21 @@ const MapContainer = ( { selectedLayer } ) => {
         //the map view uses geographic coordinates (even if the view projection is not geographic).
         geographicProj();
     
-        const overlay = new Overlay({
+        overlay.current = new Overlay({
             element: popup.current,
             autoPan: true,
             autoPanAnimation: {
               duration: 250,
             },
         });
-        setOverlay(overlay);
 
-        const initialMap = new Map({
+        map.current = new Map({
             layers: [
                 new TileLayer({
                 source: new OSM(),
                 })
             ],
-            overlays: [overlay],
+            overlays: [overlay.current],
             target: mapContainer.current,
             view: new View({
                 center: [0, 0],
@@ -77,12 +69,12 @@ const MapContainer = ( { selectedLayer } ) => {
         })
 
         //Manually set the map view from the initial state when the page just loaded.
-        setMapViewFromState(initialMap);
-        initialMap.on('moveend', () => URLStateManager.getInstance().setMapState(initialMap)); 
-        setMap(initialMap);
+        setMapViewFromState();
+        map.current.on('moveend', () => URLStateManager.getInstance().setMapState(map.current)); 
+        map.current.on('click', onMapClick);
 
         popupCloser.current.onclick = function () {
-            overlay.setPosition(undefined);
+            overlay.current.setPosition(undefined);
             return false;
         };
     }, [])
@@ -92,45 +84,28 @@ const MapContainer = ( { selectedLayer } ) => {
      * to match the new selected layer.
      */
     useEffect(() => {
-        if (map) {
-            if (currentOlFeaturesLayer) {
-                map.removeLayer(currentOlFeaturesLayer);
-                setCurrentOlFeaturesLayer(null);
-                setCurrentFeaturesLayer(null);
-            }
-            overlay.setPosition(undefined);
-            if (selectedLayer) {
-                URLStateManager.getInstance().setLayerState(selectedLayer.id);
-                const featureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
-                setCurrentFeaturesLayer(featureLayer);
-                const olFeaturesLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer).olLayer;
-                setCurrentOlFeaturesLayer(olFeaturesLayer);
-                map.addLayer(olFeaturesLayer);
-            }else {
-                URLStateManager.getInstance().setLayerState(null);
-            }
+        if (currentOlFeaturesLayer.current) {
+            map.current.removeLayer(currentOlFeaturesLayer.current);
+            currentOlFeaturesLayer.current = null;
+            currentFeaturesLayer.current = null;
+        }
+        overlay.current.setPosition(undefined);
+        if (selectedLayer) {
+            URLStateManager.getInstance().setLayerState(selectedLayer.id);
+            currentFeaturesLayer.current = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
+            currentOlFeaturesLayer.current = currentFeaturesLayer.current.olLayer;
+            map.current.addLayer(currentOlFeaturesLayer.current);
+        }else {
+            URLStateManager.getInstance().setLayerState(null);
         }
     }, [selectedLayer])
 
     /**
-     * The onMapClick() function call a method from currentFeaturesLayer so we need to
-     * update the onMapClick callback whenever the currentFeaturesLayer state change.
-     */
-    useEffect(() => {
-        if (map && currentFeaturesLayer) {
-            if (clickBindKey) {
-                unByKey(clickBindKey);
-            }
-            setClickBindKey(map.on(['click'], onMapClick));
-        }
-    }, [currentFeaturesLayer])
-
-    /**
      * Set the map view center/zoom to the values stored in the URL state.
      */
-    const setMapViewFromState = (map) => {
-        map.getView().setCenter(URLStateManager.getInstance().state.viewCenter);
-        map.getView().setZoom(URLStateManager.getInstance().state.viewZoom);
+    const setMapViewFromState = () => {
+        map.current.getView().setCenter(URLStateManager.getInstance().state.viewCenter);
+        map.current.getView().setZoom(URLStateManager.getInstance().state.viewZoom);
     }
 
     /**
@@ -140,22 +115,20 @@ const MapContainer = ( { selectedLayer } ) => {
      */
     const onMapClick = (event) => {
         var hit = false;
-        if (map) {
-            overlay.setPosition(undefined);
-            map.forEachFeatureAtPixel(
-                event.pixel,
-                function (feature) {
-                    //Only keep the first hit
-                    if (!hit) {
-                        hit = true;
-                        currentFeaturesLayer.onFeatureClick(feature, event.coordinate, map, overlay, popupContent);
-                    }
-                },
-                {
-                    hitTolerance: 3
+        overlay.current.setPosition(undefined);
+        map.current.forEachFeatureAtPixel(
+            event.pixel,
+            function (feature) {
+                //Only keep the first hit
+                if (!hit) {
+                    hit = true;
+                    currentFeaturesLayer.current.onFeatureClick(feature, event.coordinate, map.current, overlay.current, popupContent);
                 }
-            );
-        }
+            },
+            {
+                hitTolerance: 3
+            }
+        );
     }
 
     return (
