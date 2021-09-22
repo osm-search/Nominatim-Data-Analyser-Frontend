@@ -26,10 +26,12 @@ const LayersList = ( { selectedLayer, setSelectedLayer } ) => {
     }, [])
 
     useEffect(() => {
-        const urlStateManager = URLStateManager.getInstance();
-        if (urlStateManager.state.layerID) {
-            const layer = layers.find(l => l.id === decodeURI(urlStateManager.state.layerID));
-            setSelectedLayer(layer);
+        if (Array.isArray(layers) && layers.length > 0) {
+            const urlStateManager = URLStateManager.getInstance();
+            if (urlStateManager.state.layerID) {
+                const layer = layers.find(l => l.id === decodeURI(urlStateManager.state.layerID));
+                setSelectedLayer(layer);
+            }
         }
     }, [layers])
 

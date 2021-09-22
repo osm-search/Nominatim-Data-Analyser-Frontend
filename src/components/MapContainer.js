@@ -83,20 +83,25 @@ const MapContainer = ( { selectedLayer } ) => {
      * When the state of selectedLayer change, the openlayers features layer is updated
      * to match the new selected layer.
      */
+    const isFirstRenderSelectedLayer = useRef(true);
     useEffect(() => {
-        if (currentOlFeaturesLayer.current) {
-            map.current.removeLayer(currentOlFeaturesLayer.current);
-            currentOlFeaturesLayer.current = null;
-            currentFeaturesLayer.current = null;
-        }
-        overlay.current.setPosition(undefined);
-        if (selectedLayer) {
-            URLStateManager.getInstance().setLayerState(selectedLayer.id);
-            currentFeaturesLayer.current = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
-            currentOlFeaturesLayer.current = currentFeaturesLayer.current.olLayer;
-            map.current.addLayer(currentOlFeaturesLayer.current);
+        if (!isFirstRenderSelectedLayer.current) {
+            if (currentOlFeaturesLayer.current) {
+                map.current.removeLayer(currentOlFeaturesLayer.current);
+                currentOlFeaturesLayer.current = null;
+                currentFeaturesLayer.current = null;
+            }
+            overlay.current.setPosition(undefined);
+            if (selectedLayer) {
+                URLStateManager.getInstance().setLayerState(selectedLayer.id);
+                currentFeaturesLayer.current = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
+                currentOlFeaturesLayer.current = currentFeaturesLayer.current.olLayer;
+                map.current.addLayer(currentOlFeaturesLayer.current);
+            }else {
+                URLStateManager.getInstance().setLayerState(null);
+            }
         }else {
-            URLStateManager.getInstance().setLayerState(null);
+            isFirstRenderSelectedLayer.current = false;
         }
     }, [selectedLayer])
 
