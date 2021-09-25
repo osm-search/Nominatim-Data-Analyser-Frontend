@@ -1,5 +1,6 @@
 import Scrollbars from "react-custom-scrollbars-2"
 import CrossIcon from '../assets/icons/cross.svg';
+import LocalStorageKeys from '../local-storage/localStorageKeys.ts';
 
 /**
  * Display information on an absolute panel displayed on top of the map.
@@ -7,13 +8,18 @@ import CrossIcon from '../assets/icons/cross.svg';
  * @param {CallableFunction} props.setInfoPanelDisplayed Callback to set hide or display this information panel.
  */
 const InformationPanel = ({ setInfoPanelDisplayed }) => {
+    const closeInfoPanel = () => {
+        setInfoPanelDisplayed(false);
+        localStorage.setItem(LocalStorageKeys.IS_INFO_PANEL_HIDDEN, 'true');
+    }
+
     return (
         <section className='information-panel'>
             <Scrollbars autoHeight autoHeightMax={'100%'} renderTrackHorizontal={props => <div {...props} style={{display: 'none'}} className="track-horizontal"/>}>
                 <div className='information-panel-title-wrapper'>
                     <h2>Welcome to the <span className='blue-text'>Nominatim QA</span> Tool!</h2>
                     <div className='flex-one'></div>
-                    <button className='information-panel-close-button' onClick={() => setInfoPanelDisplayed(false)}>
+                    <button className='information-panel-close-button' onClick={closeInfoPanel}>
                         <img src={CrossIcon} alt='close icon' className="information-panel-close-icon"/>
                     </button>
                 </div>
