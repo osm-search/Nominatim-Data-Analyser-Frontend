@@ -52,20 +52,27 @@ const LayersList = ( { selectedLayer, setSelectedLayer } ) => {
             method: 'GET',
             cache: 'no-cache'
         };
-        const layersResponse = await fetch(`${config.WEB_PATH}/layers.json`, requestInit);
-        if (layersResponse.ok) {
-            const layersList = await layersResponse.json();
-            const loadedLayers = []
-            for (const layerURL of layersList.layers) {
-                const layerResponse = await fetch(layerURL, requestInit);
-                if (layerResponse.ok) {
-                    const layerData = await layerResponse.json();
-                    loadedLayers.push(layerData);
+        try {
+            const layersResponse = await fetch(`${config.WEB_PATH}/layers.json`, requestInit);
+            if (layersResponse.ok) {
+                const layersList = await layersResponse.json();
+                const loadedLayers = []
+                for (const layerURL of layersList.layers) {
+                    try {
+                        const layerResponse = await fetch(layerURL, requestInit);
+                        if (layerResponse.ok) {
+                            const layerData = await layerResponse.json();
+                            loadedLayers.push(layerData);
+                        }
+                    } catch (error) {
+                        console.warn('Error while loading the layer: ' + layerURL + ' from the server');
+                    }
                 }
+                setLayers(loadedLayers);
             }
-            setLayers(loadedLayers);
+        } catch (error) {
+            console.warn('Error while loading the layers list from the server.');
         }
- 
     }
 
     return (
