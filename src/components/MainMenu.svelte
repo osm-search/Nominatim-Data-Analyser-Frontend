@@ -1,7 +1,7 @@
 <script lang='ts'>
     import {map} from '../store/mapStore';
     import {onDestroy, onMount} from 'svelte';
-    import LayersList from './LayersList.svelte';
+    import LayersList from './layers/LayersList.svelte';
     import {Svroller} from 'svrollbar';
 
     let isMenuOpen = true;

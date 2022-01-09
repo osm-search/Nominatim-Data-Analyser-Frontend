@@ -4,7 +4,7 @@
     * Map the keys of the layer documentation to a more
     * elaborate value.
     */
-    import ILayer from '../model/ILayer';
+    import ILayer from '../../model/ILayer';
 
     const DOC_TITLE_MAPPING = {
         'description': 'Description of the layer',

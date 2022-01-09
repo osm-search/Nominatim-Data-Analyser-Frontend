@@ -1,7 +1,7 @@
 <script lang='ts'>
-    import ILayer from '../model/ILayer';
-    import config from '../config/config.json';
-    import ILayersList from '../model/ILayersList';
+    import ILayer from '../../model/ILayer';
+    import config from '../../config/config.json';
+    import ILayersList from '../../model/ILayersList';
     import {onMount} from 'svelte';
     import {Wave} from 'svelte-loading-spinners';
     import Layer from './Layer.svelte';

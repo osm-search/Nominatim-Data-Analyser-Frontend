@@ -1,6 +1,6 @@
 <script lang='ts'>
-    import ILayer from '../model/ILayer';
-    import {selectedLayer} from '../store/layerStore';
+    import ILayer from '../../model/ILayer';
+    import {selectedLayer} from '../../store/layerStore';
     import LayerDocumentationEntry from './LayerDocumentationEntry.svelte';
 
     export let layer: ILayer;
