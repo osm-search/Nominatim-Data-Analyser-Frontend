@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import {map} from '../store/mapStore';
+    import {map} from '../stores/mapStore';
     import {onDestroy, onMount} from 'svelte';
     import LayersList from './layers/LayersList.svelte';
     import {Svroller} from 'svrollbar';

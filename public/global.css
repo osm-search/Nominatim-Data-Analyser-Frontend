@@ -48,6 +48,10 @@ button {
 	flex: 1;
 }
 
+.bold {
+	font-weight: bold;
+}
+
 .svlr-wrapper {
 	overflow: hidden;
 }

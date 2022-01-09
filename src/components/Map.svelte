@@ -1,32 +1,38 @@
 <script lang='ts'>
     import {onMount} from 'svelte';
     import 'ol/ol.css';
-    import {Overlay, View} from "ol";
+    import {Feature, Overlay, View} from "ol";
     import Map from 'ol/Map';
     import TileLayer from 'ol/layer/Tile';
     import {OSM} from 'ol/source';
     import {defaults as defaultControls} from 'ol/control';
     import {useGeographic} from 'ol/proj';
-    import {map} from '../store/mapStore';
+    import {selectedLayer} from '../stores/layerStore';
+    import ILayer from '../model/ILayer';
+    import {get} from 'svelte/store';
+    import FeaturesLayerFactory from '../ol-layers-logic/FeaturesLayerFactory';
+    import BaseLayer from 'ol/layer/Base';
+    import {Geometry} from 'ol/geom';
+    import ClusteredFeaturesLayer from '../ol-layers-logic/ClusteredFeaturesLayer';
+    import OlMap from 'ol/Map';
+    import {map} from '../stores/mapStore';
+    import Popup from './Popup.svelte';
 
-    let mapHTMLDiv;
-    let overlay;
-    let overlayHTMLDiv;
+    let localMap: OlMap;
+    let overlay: Overlay | undefined;
+
+    let mapHTMLDiv: HTMLDivElement;
+    let popupContent: HTMLDivElement;
+
+    let currentOlFeaturesLayer: BaseLayer | undefined;
+    let currentClusteredFeatureLayer: ClusteredFeaturesLayer | undefined;
 
     onMount(() => {
         //Calling the useGeographic function in the 'ol/proj' module makes it so
         //the map view uses geographic coordinates (even if the view projection is not geographic).
         useGeographic();
 
-        overlay = new Overlay({
-            element: overlayHTMLDiv,
-            autoPan: true,
-            autoPanAnimation: {
-                duration: 250,
-            },
-        });
-
-        map.set(new Map({
+        localMap = new Map({
             layers: [
                 new TileLayer({
                     source: new OSM(),
@@ -43,20 +49,56 @@
                 center: [0, 0],
                 zoom: 0
             })
-        }));
+        });
+
+        map.set(localMap);
+
+        localMap.on('click', onMapClick);
     });
+
+    selectedLayer.subscribe((selectedLayer: ILayer) => {
+        if (currentOlFeaturesLayer) {
+            localMap.removeLayer(currentOlFeaturesLayer);
+            currentOlFeaturesLayer = undefined;
+            currentClusteredFeatureLayer = undefined;
+        }
+        overlay?.setPosition(undefined);
+        if (selectedLayer) {
+            //URLStateManager.getInstance().setLayerState(selectedLayer.id);
+            currentClusteredFeatureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
+            currentOlFeaturesLayer = currentClusteredFeatureLayer.olLayer;
+            localMap.addLayer(currentOlFeaturesLayer);
+        }else {
+            //URLStateManager.getInstance().setLayerState(null);
+        }
+    });
+
+    function onMapClick(event) {
+        let hit = false;
+
+        overlay.setPosition(undefined);
+
+        localMap.forEachFeatureAtPixel(
+            event.pixel,
+            function (feature: Feature<Geometry>) {
+                //Only keep the first hit
+                if (!hit) {
+                    hit = true;
+                    currentClusteredFeatureLayer?.onFeatureClick(
+                        feature, event.coordinate, localMap, overlay, popupContent
+                    );
+                }
+            },
+            {
+                hitTolerance: 3
+            }
+        );
+    }
 </script>
 
 <section class='map-container'>
     <div bind:this={mapHTMLDiv} id='map'></div>
-    <div bind:this={overlayHTMLDiv} class='ol-popup'>
-        <div class='popup-header'>
-            <p>Properties</p>
-            <div class='flex-one'></div>
-            <img src='assets/icons/cross-icon.svg' alt='close icon popup' class='ol-popup-close-icon'/>
-        </div>
-<!--        <div ref={popupContent} class='ol-popup-content'></div>-->
-    </div>
+    <Popup bind:overlay={overlay} bind:popupContent={popupContent}/>
 </section>
 
 <style>
@@ -68,64 +110,5 @@
     #map {
         flex: 1;
         height: 100%;
-    }
-
-    .ol-popup {
-        position: absolute;
-        width: 220px;
-        background-color: white;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-        padding: 10px 15px 15px 15px;
-        border-radius: 10px;
-        border: 1px solid #cccccc;
-        bottom: 12px;
-        left: -50px;
-    }
-
-    .popup-header {
-        display: flex;
-        margin-bottom: 10px;
-    }
-
-    .popup-header p {
-        margin: 0;
-        font-weight: bold;
-    }
-
-    .ol-popup-close-icon {
-        width: 15px;
-        cursor: pointer;
-    }
-
-    .ol-popup-content p {
-        margin: 0;
-        max-width: 800px;
-        white-space: pre-wrap;
-        margin-top: 0.5em;
-        font-size: 0.9em;
-    }
-
-    .ol-popup:after, .ol-popup:before {
-        top: 100%;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-    }
-
-    .ol-popup:after {
-        border-top-color: white;
-        border-width: 10px;
-        left: 48px;
-        margin-left: -10px;
-    }
-
-    .ol-popup:before {
-        border-top-color: #cccccc;
-        border-width: 11px;
-        left: 48px;
-        margin-left: -11px;
     }
 </style>
