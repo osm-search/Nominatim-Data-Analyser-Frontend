@@ -9,7 +9,6 @@
     import {useGeographic} from 'ol/proj';
     import {selectedLayer} from '../stores/layerStore';
     import ILayer from '../model/ILayer';
-    import {get} from 'svelte/store';
     import FeaturesLayerFactory from '../ol-layers-logic/FeaturesLayerFactory';
     import BaseLayer from 'ol/layer/Base';
     import {Geometry} from 'ol/geom';
@@ -17,6 +16,7 @@
     import OlMap from 'ol/Map';
     import {map} from '../stores/mapStore';
     import Popup from './Popup.svelte';
+    import URLStateManager from '../URLStateManager';
 
     let localMap: OlMap;
     let overlay: Overlay | undefined;
@@ -51,12 +51,21 @@
             })
         });
 
-        map.set(localMap);
-
+        //Manually set the map view from the initial state when the page just loaded.
+        setMapViewFromState();
+        localMap.on('moveend', () => URLStateManager.getInstance().setMapState(localMap));
         localMap.on('click', onMapClick);
+
+        map.set(localMap);
     });
 
+    let isFirstSelectedLayerUpdate = true;
     selectedLayer.subscribe((selectedLayer: ILayer) => {
+        if (isFirstSelectedLayerUpdate) {
+            isFirstSelectedLayerUpdate = false;
+            return;
+        }
+
         if (currentOlFeaturesLayer) {
             localMap.removeLayer(currentOlFeaturesLayer);
             currentOlFeaturesLayer = undefined;
@@ -64,14 +73,22 @@
         }
         overlay?.setPosition(undefined);
         if (selectedLayer) {
-            //URLStateManager.getInstance().setLayerState(selectedLayer.id);
+            URLStateManager.getInstance().setLayerState(selectedLayer.id);
             currentClusteredFeatureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
             currentOlFeaturesLayer = currentClusteredFeatureLayer.olLayer;
             localMap.addLayer(currentOlFeaturesLayer);
         }else {
-            //URLStateManager.getInstance().setLayerState(null);
+            URLStateManager.getInstance().setLayerState(null);
         }
     });
+
+    /**
+     * Set the map view center/zoom to the values stored in the URL state.
+     */
+    const setMapViewFromState = () => {
+        localMap.getView().setCenter(URLStateManager.getInstance().state.viewCenter);
+        localMap.getView().setZoom(URLStateManager.getInstance().state.viewZoom);
+    }
 
     function onMapClick(event) {
         let hit = false;

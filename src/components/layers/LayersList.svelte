@@ -5,6 +5,8 @@
     import {onMount} from 'svelte';
     import {Wave} from 'svelte-loading-spinners';
     import Layer from './Layer.svelte';
+    import {selectedLayer} from '../../stores/layerStore';
+    import URLStateManager from '../../URLStateManager';
 
     let allLayers: ILayer[] = [];
     let isLoading = true;
@@ -26,6 +28,7 @@
                 loadEachLayer(requestInit, layersList).then((layers) => {
                     allLayers = layers;
                     isLoading = false;
+                    loadInitialSelectedLayer();
                 });
             }
         } catch (error) {
@@ -49,6 +52,16 @@
         return loadedLayers;
     }
 
+    function loadInitialSelectedLayer() {
+        if (Array.isArray(allLayers) && allLayers.length > 0) {
+            const urlStateManager = URLStateManager.getInstance();
+            console.log('STATE', urlStateManager.state);
+            if (urlStateManager.state.layerID) {
+                const layer = allLayers.find(l => l.id === decodeURI(urlStateManager.state.layerID));
+                selectedLayer.set(layer);
+            }
+        }
+    }
 </script>
 
 <div class='layers-list-wrapper'>
