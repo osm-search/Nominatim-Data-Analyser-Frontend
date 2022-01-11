@@ -32,9 +32,6 @@ const InformationPanel = ({ setInfoPanelDisplayed }) => {
                 <p>
                     We do not have a "report false positive" feature implemented yet. If you find a lot of data which should not be considered as errors, please come to the "Issues" section of the <a href='https://github.com/AntoJvlt/Nominatim-Data-Analyser/issues' target='_blank' rel="noreferrer">github repository</a> to discuss this.
                 </p>
-                <p className='italic-text'>
-                    /!\ You might encounter some performance issues with some layers if you are using the Firefox browser. Please switch to another browser if this is the case. /!\
-                </p>
             </Scrollbars>
         </section>
     )
