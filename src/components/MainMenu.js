@@ -26,7 +26,7 @@ const MainMenu = ( { isMenuToggle, setMenuToggle, selectedLayer, setSelectedLaye
             <div className='flex-one'></div>
             <div className='github-wrapper'>
                 <img src={GithubIcon} alt='github icon'/>
-                <a href='https://github.com/AntoJvlt/Nominatim-Data-Analyser' target='_blank' rel="noreferrer">osm-search/Nominatim-Data-Analyser</a>
+                <a href='https://github.com/osm-search/Nominatim-Data-Analyser' target='_blank' rel="noreferrer">osm-search/Nominatim-Data-Analyser</a>
             </div>
         </section>
     )
