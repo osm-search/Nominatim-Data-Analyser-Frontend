@@ -1,6 +1,6 @@
 # Nominatim-Data-Analyser-Frontend
 
-The Nominatim Data Analyser is a QA tool used to scan the nominatim database and extract suspect data from it. These data are then presented to mappers through this webapp developped in Svelte. The repository of the main backend can be found here: [Nominatim-Data-Analyser](https://github.com/osm-search/Nominatim-Data-Analyser).
+The Nominatim Data Analyser is a QA tool used to scan the nominatim database and extract suspect data from it. These data are then [presented to mappers](https://nominatim.org/qa/) through this webapp developed in Svelte. The repository of the main backend can be found here: [Nominatim-Data-Analyser](https://github.com/osm-search/Nominatim-Data-Analyser).
 
 # How to build
 
