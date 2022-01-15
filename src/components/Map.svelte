@@ -5,7 +5,7 @@
     import Map from 'ol/Map';
     import TileLayer from 'ol/layer/Tile';
     import {OSM} from 'ol/source';
-    import {defaults as defaultControls} from 'ol/control';
+    import {defaults as defaultControls, ZoomSlider} from 'ol/control';
     import {useGeographic} from 'ol/proj';
     import {selectedLayer} from '../stores/layerStore';
     import ILayer from '../model/ILayer';
@@ -39,7 +39,7 @@
                 })
             ],
             controls: defaultControls({
-                zoom: false,
+                zoom: true,
                 attribution: true,
                 rotate: false
             }),
@@ -50,6 +50,8 @@
                 zoom: 0
             })
         });
+
+        localMap.addControl(new ZoomSlider());
 
         //Manually set the map view from the initial state when the page just loaded.
         setMapViewFromState();
