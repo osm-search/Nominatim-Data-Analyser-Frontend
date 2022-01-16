@@ -17,6 +17,7 @@
     import {map} from '../stores/mapStore';
     import Popup from './Popup.svelte';
     import URLStateManager from '../URLStateManager';
+    import ResetPositionControl from './ResetPositionControl.svelte';
 
     let localMap: OlMap;
     let overlay: Overlay | undefined;
@@ -116,7 +117,9 @@
 </script>
 
 <section class='map-container'>
-    <div bind:this={mapHTMLDiv} id='map'></div>
+    <div bind:this={mapHTMLDiv} id='map'>
+        <ResetPositionControl/>
+    </div>
     <Popup bind:overlay={overlay} bind:popupContent={popupContent}/>
 </section>
 
@@ -129,5 +132,6 @@
     #map {
         flex: 1;
         height: 100%;
+        position: relative;
     }
 </style>
