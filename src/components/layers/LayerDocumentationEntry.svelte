@@ -9,12 +9,12 @@
     const DOC_TITLE_MAPPING = {
         'description': 'Description of the layer',
         'why_problem': 'Why are these data wrong',
-        'how_to_fix': 'How to fix these errors'
+        'how_to_fix': 'How to fix these errors',
+        'last_update': 'Last update of the layer'
     };
 
     export let layer: ILayer;
     export let docEntry: string;
-
     const docTitle = docEntry in DOC_TITLE_MAPPING ? DOC_TITLE_MAPPING[docEntry] : docEntry;
 </script>
 

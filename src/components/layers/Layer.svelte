@@ -31,6 +31,7 @@
         <LayerDocumentationEntry layer={layer} docEntry='description'/>
         <LayerDocumentationEntry layer={layer} docEntry='why_problem'/>
         <LayerDocumentationEntry layer={layer} docEntry='how_to_fix'/>
+        <LayerDocumentationEntry layer={layer} docEntry='last_update'/>
     </div>
 </div>
 

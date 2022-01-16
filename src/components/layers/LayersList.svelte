@@ -55,7 +55,6 @@
     function loadInitialSelectedLayer() {
         if (Array.isArray(allLayers) && allLayers.length > 0) {
             const urlStateManager = URLStateManager.getInstance();
-            console.log('STATE', urlStateManager.state);
             if (urlStateManager.state.layerID) {
                 const layer = allLayers.find(l => l.id === decodeURI(urlStateManager.state.layerID));
                 selectedLayer.set(layer);
