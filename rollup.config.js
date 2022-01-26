@@ -6,9 +6,16 @@ import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
+import virtual from '@rollup/plugin-virtual';
 import json from '@rollup/plugin-json';
 
 const production = !process.env.ROLLUP_WATCH;
+
+const web_path = process.env.NOMINATIM_QA_WEBPATH || 'https://qa-tile.nominatim.openstreetmap.org';
+
+function export_str(content) {
+	return `export default '` + content + `'`;
+}
 
 function serve() {
 	let server;
@@ -40,6 +47,7 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
+		virtual({'CFG_WEB_PATH': export_str(web_path)}),
 		svelte({
 			preprocess: sveltePreprocess({ sourceMap: !production }),
 			compilerOptions: {
