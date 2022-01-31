@@ -1,6 +1,6 @@
 <script lang='ts'>
     import ILayer from '../../model/ILayer';
-    import config from '../../config/config.json';
+    import web_path from 'CFG_WEB_PATH';
     import ILayersList from '../../model/ILayersList';
     import {onMount} from 'svelte';
     import {Wave} from 'svelte-loading-spinners';
@@ -22,7 +22,7 @@
         };
 
         try {
-            const layersResponse = await fetch(`${config.WEB_PATH}/layers.json`, requestInit);
+            const layersResponse = await fetch(`${web_path}/layers.json`, requestInit);
             if (layersResponse.ok) {
                 const layersList: ILayersList = await layersResponse.json();
                 loadEachLayer(requestInit, layersList).then((layers) => {
