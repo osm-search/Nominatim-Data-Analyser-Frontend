@@ -77,7 +77,7 @@
     }
 
     .layer-data-wrapper.layer-data-toggle {
-        max-height: 500px;
+        max-height: 10000px;
         transition: max-height 0.5s ease-in;
     }
 
