@@ -8,11 +8,15 @@
     <MainMenu/>
     <Map/>
     <InformationPanel/>
+    <iframe id="hiddenIframe" name="hiddenIframe" title="hiddenIframe"></iframe>
 </div>
 
 <style>
     .app {
         height: 100%;
         display: flex;
+    }
+    #hiddenIframe {
+        display: none;
     }
 </style>
