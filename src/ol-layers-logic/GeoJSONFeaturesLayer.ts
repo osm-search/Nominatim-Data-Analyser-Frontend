@@ -65,7 +65,7 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
                 duration: 1000
             })
         }else {
-            popup.innerHTML = this.constructPopupContent(feature);
+            popup.innerHTML = this.constructPopupContent(feature, coordinates);
             overlay.setPosition(coordinates); 
         }
     }
