@@ -23,7 +23,6 @@
     let overlay: Overlay | undefined;
 
     let mapHTMLDiv: HTMLDivElement;
-    let popupContent: HTMLDivElement;
 
     let currentOlFeaturesLayer: BaseLayer | undefined;
     let currentClusteredFeatureLayer: ClusteredFeaturesLayer | undefined;
@@ -105,7 +104,7 @@
                 if (!hit) {
                     hit = true;
                     currentClusteredFeatureLayer?.onFeatureClick(
-                        feature, event.coordinate, localMap, overlay, popupContent
+                        feature, event.coordinate, localMap, overlay
                     );
                 }
             },
@@ -120,7 +119,7 @@
     <div bind:this={mapHTMLDiv} id='map'>
         <ResetPositionControl/>
     </div>
-    <Popup bind:overlay={overlay} bind:popupContent={popupContent}/>
+    <Popup bind:overlay={overlay} />
 </section>
 
 <style>
