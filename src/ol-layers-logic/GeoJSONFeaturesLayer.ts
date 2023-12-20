@@ -9,13 +9,14 @@ import {Feature, Overlay} from 'ol';
 import {Point} from 'ol/geom';
 import VectorSource from 'ol/source/Vector';
 import OlMap from 'ol/Map';
+import {objProperties} from '../stores/propertyStore';
 
 /**
  * Handles the logic for a features layer with a GeoJSON source.
  */
 class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
     private readonly source_url: any;
-    
+
     constructor(layer: ILayer) {
         const getFeatureSize = (feature: Feature<Point>) => feature.get('features').length;
         super(8, 25, getFeatureSize);
@@ -48,7 +49,7 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
      * If the feature is not a cluster, the popup is opened with the well constructed content inside.
      */
     onFeatureClick(feature: Feature<Point>, coordinates: number[],
-                   map: OlMap, overlay: Overlay, popup: HTMLDivElement): void
+                   map: OlMap, overlay: Overlay): void
     {
         const originalFeatures = feature.get('features');
         if (originalFeatures.length > 1){
@@ -64,8 +65,9 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
                 zoom: targetZoom,
                 duration: 1000
             })
-        }else {
-            popup.innerHTML = this.constructPopupContent(feature, coordinates);
+        } else {
+            objProperties.set({properties: this.getFeatureProperties(feature),
+                               coordinates: coordinates});
             overlay.setPosition(coordinates); 
         }
     }

@@ -11,6 +11,7 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import OlMap from 'ol/Map';
 import {Overlay} from 'ol';
+import {objProperties} from '../stores/propertyStore';
 
 /**
  * Handles the logic for a features layer with a VectorTile source.
@@ -56,7 +57,7 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
      * If the feature is not a cluster, the popup is opened with the well constructed content inside.
      */
     onFeatureClick(feature: Feature<Point>, coordinates: number[],
-                   map: OlMap, overlay: Overlay, popup: HTMLDivElement): void
+                   map: OlMap, overlay: Overlay): void
     {
         if (feature.get('cluster')){
             map.getView().animate({
@@ -64,8 +65,9 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
                 zoom: feature.get('clusterExpansionZoom'),
                 duration: 1000
             })
-        }else {
-            popup.innerHTML = this.constructPopupContent(feature, coordinates);
+        } else {
+            objProperties.set({properties: this.getFeatureProperties(feature),
+                               coordinates: coordinates});
             overlay.setPosition(coordinates); 
         }
     }
