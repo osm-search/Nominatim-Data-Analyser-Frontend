@@ -1,10 +1,10 @@
 <script lang='ts'>
-    import SvelteMarkdown from 'svelte-markdown'
+    import Markdown from 'svelte-exmarkdown'
     /*
     * Map the keys of the layer documentation to a more
     * elaborate value.
     */
-    import ILayer from '../../model/ILayer';
+    import type ILayer from '../../model/ILayer';
 
     const DOC_TITLE_MAPPING = {
         'description': 'Description of the layer',
@@ -22,7 +22,7 @@
     <div>
         <p class='doc-title'>{docTitle}:</p>
         <div class='doc-content'>
-            <SvelteMarkdown source={layer['doc'][docEntry]}/>
+            <Markdown md={layer['doc'][docEntry]}/>
         </div>
     </div>
 {/if}

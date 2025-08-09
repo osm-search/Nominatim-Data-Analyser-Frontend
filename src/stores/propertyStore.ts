@@ -1,4 +1,4 @@
 import {writable} from 'svelte/store';
-import Property from '../model/IProperty';
+import type IProperty from '../model/IProperty';
 
-export const objProperties = writable<Property>({properties: null, coordinates: []});
+export const objProperties = writable<IProperty>({properties: null, coordinates: []});

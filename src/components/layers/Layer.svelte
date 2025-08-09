@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import ILayer from '../../model/ILayer';
+    import type ILayer from '../../model/ILayer';
     import {selectedLayer} from '../../stores/layerStore';
     import LayerDocumentationEntry from './LayerDocumentationEntry.svelte';
 
@@ -37,7 +37,7 @@
 
 <style>
     .layer-wrapper:not(:first-child) {
-        border-top: solid 1px #e8e8e8;;
+        border-top: solid 1px #e8e8e8;
     }
 
     .layer-wrapper {

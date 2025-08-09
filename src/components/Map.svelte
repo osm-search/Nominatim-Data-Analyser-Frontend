@@ -8,7 +8,7 @@
     import {defaults as defaultControls, ZoomSlider} from 'ol/control';
     import {useGeographic} from 'ol/proj';
     import {selectedLayer} from '../stores/layerStore';
-    import ILayer from '../model/ILayer';
+    import type ILayer from '../model/ILayer';
     import FeaturesLayerFactory from '../ol-layers-logic/FeaturesLayerFactory';
     import BaseLayer from 'ol/layer/Base';
     import {Geometry} from 'ol/geom';
@@ -47,7 +47,8 @@
             target: mapHTMLDiv,
             view: new View({
                 center: [0, 0],
-                zoom: 0
+                zoom: 0,
+                maxZoom: 19
             })
         });
 

@@ -1,6 +1,6 @@
 import GeoJSONFeaturesLayer from "./GeoJSONFeaturesLayer";
 import VectorTileFeaturesLayer from "./VectorTileFeaturesLayer";
-import ILayer from '../model/ILayer';
+import type ILayer from '../model/ILayer';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
 
 /**
@@ -10,10 +10,8 @@ class FeaturesLayerFactory {
     static constructFeaturesLayer(layer: ILayer): ClusteredFeaturesLayer {
         if ('geojson_url' in layer) {
             return new GeoJSONFeaturesLayer(layer)
-        }else if ('vector_tile_url') {
+        } else {
             return new VectorTileFeaturesLayer(layer);
-        }else {
-            return null;
         }
     }
 }

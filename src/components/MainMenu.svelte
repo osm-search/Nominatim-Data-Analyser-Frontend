@@ -2,7 +2,6 @@
     import {map} from '../stores/mapStore';
     import {onDestroy, onMount} from 'svelte';
     import LayersList from './layers/LayersList.svelte';
-    import {Svroller} from 'svrollbar';
 
     let isMenuOpen = true;
     let menuHTMLSection: HTMLElement;
@@ -49,12 +48,9 @@
             <img src='assets/icons/left-arrow-icon.svg' alt='menu icon' class='menu-icon' on:click={close}/>
         </div>
         <p class='layers-label'>Layers:</p>
-        <Svroller width='100%' height='100%'>
-            <LayersList/>
-        </Svroller>
-        <!--    <Scrollbars autoHeight autoHeightMax={'100%'}>-->
-        <!--        <LayersList selectedLayer={selectedLayer} setSelectedLayer={setSelectedLayer}/>-->
-        <!--    </Scrollbars>-->
+        <div class="scrollable">
+          <LayersList/>
+        </div>
         <div class='github-wrapper'>
             <img src='assets/icons/github-icon.svg' alt='github icon'/>
             <a href='https://github.com/osm-search/Nominatim-Data-Analyser' target='_blank' rel="noreferrer">
@@ -65,6 +61,10 @@
 </div>
 
 <style>
+    .scrollable {
+        overflow: auto
+    }
+
     .main-menu-wrapper {
         width: 400px;
         height: 100%;

@@ -4,8 +4,9 @@ import GeoJSON from 'ol/format/GeoJSON';
 import {Cluster} from 'ol/source';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
 import {createEmpty, extend, getCenter} from 'ol/extent';
-import ILayer from '../model/ILayer';
+import type ILayer from '../model/ILayer';
 import {Feature, Overlay} from 'ol';
+import type {FeatureLike} from 'ol/Feature';
 import {Point} from 'ol/geom';
 import VectorSource from 'ol/source/Vector';
 import OlMap from 'ol/Map';
@@ -28,7 +29,7 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
      * The current date is added to the source_url in order to avoid caching by
      * the browser or server.
      */
-    get olLayer(): VectorLayer<VectorSource<Point>> {
+    get olLayer(): VectorLayer<VectorSource> {
         return new VectorLayer({
             source: new Cluster({
                 distance: 50,
@@ -37,7 +38,7 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
                     format: new GeoJSON()
                 }),
             }),
-            style: (feature: Feature<Point>) => this.getStyle(feature)
+            style: (feature: FeatureLike, resolution: number) => this.getStyle(feature)
         });
     }
 
@@ -54,7 +55,7 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
         const originalFeatures = feature.get('features');
         if (originalFeatures.length > 1){
             const extent = createEmpty();
-            originalFeatures.forEach(function(f, index, array){
+            originalFeatures.forEach(function(f: any, index: number, array: any){
                 extend(extent, f.getGeometry().getExtent());
             });
             const resolution = map.getView().getResolutionForExtent(extent);

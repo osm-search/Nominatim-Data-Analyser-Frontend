@@ -1,5 +1,6 @@
 import { Style, Circle, Stroke, Fill, Text, Icon } from "ol/style";
 import {Feature} from 'ol';
+import type {FeatureLike} from 'ol/Feature';
 import {Point} from 'ol/geom';
 import BaseLayer from 'ol/layer/Base';
 
@@ -15,9 +16,9 @@ abstract class ClusteredFeaturesLayer {
     private readonly orangeFill: Fill;
     private readonly redFill: Fill;
     private readonly singlePointStyle: Style;
-    private readonly styleCache: {};
+    private readonly styleCache: {[index: number]: Style};
 
-    protected constructor(mediumSize, bigSize, getFeatureSize) {
+    protected constructor(mediumSize: any, bigSize: any, getFeatureSize: any) {
         this.mediumSize = mediumSize;
         this.bigSize = bigSize;
         this.getFeatureSize = getFeatureSize;
@@ -49,7 +50,7 @@ abstract class ClusteredFeaturesLayer {
      * generated based on the clustered feature size and other parameters.
      * @returns {Style} OpenLayers style of the feature.
      */
-    getStyle(feature: Feature<Point>){
+    getStyle(feature: FeatureLike){
         const size = this.getFeatureSize(feature);
         let style = this.styleCache[size];
 
@@ -88,7 +89,7 @@ abstract class ClusteredFeaturesLayer {
      * Called when a feature of this layer has been clicked.
      * This method should be overriden by the child classes.
      */
-    abstract onFeatureClick(feature, coordinates, map, overlay): void;
+    abstract onFeatureClick(feature: any, coordinates: any, map: any, overlay: any): void;
 
     abstract get olLayer(): BaseLayer;
 }
