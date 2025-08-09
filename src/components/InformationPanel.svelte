@@ -23,6 +23,7 @@
 
 {#if isShown}
     <section class='information-panel'>
+      <div class="scrollable">
             <div class='information-panel-title-wrapper'>
                 <h2>Welcome to the <span class='blue-text'>Nominatim QA</span> Tool!</h2>
                 <div class='flex-one'></div>
@@ -39,6 +40,7 @@
             <p>
                 We do not have a "report false positive" feature implemented yet. If you find a lot of data which should not be considered as errors, please come to the "Issues" section of the <a href='https://github.com/osm-search/Nominatim-Data-Analyser/issues' target='_blank' rel="noreferrer">github repository</a> to discuss this.
             </p>
+      </div>
     </section>
 {:else}
     <button class='open-info-panel-button' on:click={open}>
@@ -68,6 +70,10 @@
 
     .information-panel p:last-child {
         margin-bottom: 0;
+    }
+
+    .scrollable {
+       overflow: auto
     }
 
     .blue-text {

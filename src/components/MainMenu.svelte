@@ -48,7 +48,9 @@
             <img src='assets/icons/left-arrow-icon.svg' alt='menu icon' class='menu-icon' on:click={close}/>
         </div>
         <p class='layers-label'>Layers:</p>
-            <LayersList/>
+        <div class="scrollable">
+          <LayersList/>
+        </div>
         <div class='github-wrapper'>
             <img src='assets/icons/github-icon.svg' alt='github icon'/>
             <a href='https://github.com/osm-search/Nominatim-Data-Analyser' target='_blank' rel="noreferrer">
@@ -59,6 +61,10 @@
 </div>
 
 <style>
+    .scrollable {
+        overflow: auto
+    }
+
     .main-menu-wrapper {
         width: 400px;
         height: 100%;
