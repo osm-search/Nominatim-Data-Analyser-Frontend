@@ -37,7 +37,7 @@
 
 <style>
     .layer-wrapper:not(:first-child) {
-        border-top: solid 1px #e8e8e8;;
+        border-top: solid 1px #e8e8e8;
     }
 
     .layer-wrapper {
