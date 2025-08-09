@@ -8,6 +8,7 @@ import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
 import virtual from '@rollup/plugin-virtual';
 import json from '@rollup/plugin-json';
+import { spawn } from 'child_process';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -27,7 +28,7 @@ function serve() {
 	return {
 		writeBundle() {
 			if (server) return;
-			server = require('child_process').spawn('yarn', ['start', '-d'], {
+			server = spawn('yarn', ['start', '-d'], {
 				stdio: ['ignore', 'inherit', 'inherit'],
 				shell: true
 			});
