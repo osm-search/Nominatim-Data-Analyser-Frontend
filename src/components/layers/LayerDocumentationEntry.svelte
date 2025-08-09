@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import SvelteMarkdown from 'svelte-markdown'
+    import Markdown from 'svelte-exmarkdown'
     /*
     * Map the keys of the layer documentation to a more
     * elaborate value.
@@ -22,7 +22,7 @@
     <div>
         <p class='doc-title'>{docTitle}:</p>
         <div class='doc-content'>
-            <SvelteMarkdown source={layer['doc'][docEntry]}/>
+            <Markdown md={layer['doc'][docEntry]}/>
         </div>
     </div>
 {/if}
