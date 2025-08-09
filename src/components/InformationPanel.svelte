@@ -1,5 +1,4 @@
 <script>
-    import {Svroller} from 'svrollbar';
     import LocalStorageKeys from '../local-storage/localStorageKeys';
     import {onMount} from 'svelte';
 
@@ -24,7 +23,6 @@
 
 {#if isShown}
     <section class='information-panel'>
-        <Svroller width='100%' height='100%'>
             <div class='information-panel-title-wrapper'>
                 <h2>Welcome to the <span class='blue-text'>Nominatim QA</span> Tool!</h2>
                 <div class='flex-one'></div>
@@ -41,7 +39,6 @@
             <p>
                 We do not have a "report false positive" feature implemented yet. If you find a lot of data which should not be considered as errors, please come to the "Issues" section of the <a href='https://github.com/osm-search/Nominatim-Data-Analyser/issues' target='_blank' rel="noreferrer">github repository</a> to discuss this.
             </p>
-        </Svroller>
     </section>
 {:else}
     <button class='open-info-panel-button' on:click={open}>
