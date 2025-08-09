@@ -30,8 +30,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "ol": "^10.6.1",
     "sirv-cli": "^3.0.1",
-    "svelte-exmarkdown": "^5.0.2",
-    "svelte-loading-spinners": "^0.3.6"
+    "svelte-exmarkdown": "^5.0.2"
   },
   "packageManager": "yarn@3.2.3"
 }

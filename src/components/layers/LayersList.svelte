@@ -3,7 +3,7 @@
     import web_path from 'CFG_WEB_PATH';
     import type ILayersList from '../../model/ILayersList';
     import {onMount} from 'svelte';
-    import {Wave} from 'svelte-loading-spinners';
+    import Spinner from '../Spinner.svelte';
     import Layer from './Layer.svelte';
     import {selectedLayer} from '../../stores/layerStore';
     import URLStateManager from '../../URLStateManager';
@@ -66,7 +66,7 @@
 <div class='layers-list-wrapper'>
     {#if isLoading}
         <div class='layers-loading-indicator'>
-            <Wave color="#82b9ff"/>
+            <Spinner/>
         </div>
     {:else}
         {#each allLayers as layer}
