@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@rollup/plugin-json": "^6.1.0",
-    "ol": "^10.6.1",
+    "ol": "^9.2.4",
     "sirv-cli": "^3.0.1",
     "svelte-exmarkdown": "^5.0.2"
   },

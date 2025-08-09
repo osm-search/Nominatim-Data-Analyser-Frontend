@@ -43,10 +43,11 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
                 format: new MVT({
                     featureClass: Feature
                 }),
-                tileGrid: createXYZ({maxZoom: 15}),
+                maxZoom: 15,
                 url: this.source_url + '?time=' + new Date().getTime()
             }),
-            style: (feature, resolution) => this.getStyle(feature)
+            style: (feature, resolution) => this.getStyle(feature),
+            maxZoom: 19
         });
     }
 
