@@ -74,10 +74,6 @@
         color: #1A73E8;
     }
 
-    .italic-text {
-        font-style: italic;
-    }
-
     .information-panel-title-wrapper {
         display: flex;
         align-items: flex-start;
