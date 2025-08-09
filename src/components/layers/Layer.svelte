@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import ILayer from '../../model/ILayer';
+    import type ILayer from '../../model/ILayer';
     import {selectedLayer} from '../../stores/layerStore';
     import LayerDocumentationEntry from './LayerDocumentationEntry.svelte';
 

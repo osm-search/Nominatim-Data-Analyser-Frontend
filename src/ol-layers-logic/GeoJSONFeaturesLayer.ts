@@ -4,7 +4,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 import {Cluster} from 'ol/source';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
 import {createEmpty, extend, getCenter} from 'ol/extent';
-import ILayer from '../model/ILayer';
+import type ILayer from '../model/ILayer';
 import {Feature, Overlay} from 'ol';
 import {Point} from 'ol/geom';
 import VectorSource from 'ol/source/Vector';

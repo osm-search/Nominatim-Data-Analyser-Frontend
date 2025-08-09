@@ -5,7 +5,7 @@ import VectorTileSource from 'ol/source/VectorTile';
 import MVT from 'ol/format/MVT';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
 import {createXYZ} from 'ol/tilegrid';
-import ILayer from '../model/ILayer';
+import type ILayer from '../model/ILayer';
 import {Point} from 'ol/geom';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';

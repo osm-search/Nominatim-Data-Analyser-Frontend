@@ -8,7 +8,7 @@
     import {defaults as defaultControls, ZoomSlider} from 'ol/control';
     import {useGeographic} from 'ol/proj';
     import {selectedLayer} from '../stores/layerStore';
-    import ILayer from '../model/ILayer';
+    import type ILayer from '../model/ILayer';
     import FeaturesLayerFactory from '../ol-layers-logic/FeaturesLayerFactory';
     import BaseLayer from 'ol/layer/Base';
     import {Geometry} from 'ol/geom';
