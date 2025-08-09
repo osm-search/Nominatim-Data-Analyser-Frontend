@@ -12,16 +12,14 @@ export default class URLStateManager {
     readonly state: URLState;
 
     constructor() {
-        if (!URLStateManager._instance) {
-            this.state = {          
-                viewZoom: 0,
-                viewCenter: [0, 0],
-                layerID: null
-            }
-            this._loadState();
-            return this;
+        console.assert(!URLStateManager._instance, "URLStateManager shouldn't be called directly.");
+        this.state = {
+            viewZoom: 0,
+            viewCenter: [0, 0],
+            layerID: ''
         }
-        return URLStateManager._instance;
+        this._loadState();
+        return this;
     }
 
     static getInstance(): URLStateManager {
@@ -37,7 +35,7 @@ export default class URLStateManager {
         if (hashParts.length >= 3) {
             //Parse the layer name
             if (hashParts.length === 4) {
-                this.state.layerID = hashParts.pop();
+                this.state.layerID = hashParts.pop() || '';
             }
             //Parse the map state.
             if (hashParts.every((e) => !isNaN(Number(e)))) {
@@ -46,7 +44,7 @@ export default class URLStateManager {
             }
         }
     }
-    
+
     writeState(): void {
         let hash =
             '#map=' +
@@ -61,8 +59,8 @@ export default class URLStateManager {
 
     setMapState(map: OlMap): void {
         const view = map.getView();
-        this.state.viewZoom = view.getZoom();
-        this.state.viewCenter = view.getCenter();
+        this.state.viewZoom = view.getZoom() ?? this.state.viewZoom;
+        this.state.viewCenter = view.getCenter() ?? this.state.viewCenter;
         this.writeState();
     }
 

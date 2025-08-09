@@ -1,5 +1,6 @@
 import 'ol/ol.css';
 import Feature from 'ol/Feature';
+import type FeatureLike from 'ol/Feature';
 import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
 import MVT from 'ol/format/MVT';
@@ -28,7 +29,7 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
             }
         }
         super(80, 500, getFeatureSize);
-        this.source_url = 'vector_tile_url' in layer ? layer['vector_tile_url'] : '';
+        this.source_url = layer?.vector_tile_url || '';
     }
 
     /**
@@ -45,7 +46,7 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
                 tileGrid: createXYZ({maxZoom: 15}),
                 url: this.source_url + '?time=' + new Date().getTime()
             }),
-            style: (feature: Feature<Point>) => this.getStyle(feature)
+            style: (feature, resolution) => this.getStyle(feature)
         });
     }
 
@@ -75,7 +76,7 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
     /**
      * Returns the properties of the given feature object.
      */
-    getFeatureProperties(feature): {[key: string]: any} {
+    getFeatureProperties(feature: Feature<Point>): {[key: string]: any} {
         return feature.getProperties();
     }
 }
