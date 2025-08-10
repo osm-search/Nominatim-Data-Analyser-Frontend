@@ -55,12 +55,16 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
      */
     onFeatureClick(feature: Feature<Point>, coordinates: number[]): void
     {
-        if (feature.get('cluster')){
-            appState.map.getView().animate({
-                center: coordinates,
-                zoom: feature.get('clusterExpansionZoom'),
-                duration: 1000
-            })
+        if (feature.get('cluster')) {
+            const view = appState.map.getView();
+            if (view) {
+                view.animate({
+                    center: coordinates,
+                    zoom: Math.max(feature.get('clusterExpansionZoom'),
+                                   (view.getZoom() || 0) + 1),
+                    duration: 1000
+                });
+            }
         } else {
             appState.selectedFeature = {
                 properties: feature.getProperties(),

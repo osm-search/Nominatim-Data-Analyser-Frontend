@@ -62,22 +62,15 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
             const location = getCenter(extent);
             view.animate({
                 center: location,
-                zoom: targetZoom,
+                zoom: Math.max(targetZoom || 0, (view.getZoom() || 0) + 1),
                 duration: 1000
             })
         } else {
             appState.selectedFeature = {
-                properties: this.getFeatureProperties(feature),
+                properties: feature.get('features')[0].getProperties(),
                 coordinates: coordinates
             };
         }
-    }
-
-    /**
-     * Returns the properties of the given feature object.
-     */
-    getFeatureProperties(feature: Feature<Point>): {[key: string]: any} {
-        return feature.get('features')[0].getProperties();
     }
 }
 
