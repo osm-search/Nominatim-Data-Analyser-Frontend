@@ -9,7 +9,7 @@ import {Feature} from 'ol';
 import type {FeatureLike} from 'ol/Feature';
 import {Point} from 'ol/geom';
 import VectorSource from 'ol/source/Vector';
-import {appState} from '../AppState.svelte.ts';
+import {appState} from '../AppState.svelte';
 
 /**
  * Handles the logic for a features layer with a GeoJSON source.
@@ -28,7 +28,7 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
      * The current date is added to the source_url in order to avoid caching by
      * the browser or server.
      */
-    get olLayer(): VectorLayer<VectorSource> {
+    get olLayer() {
         return new VectorLayer({
             source: new Cluster({
                 distance: 50,

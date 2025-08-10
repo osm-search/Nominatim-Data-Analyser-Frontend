@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import {appState} from '../AppState.svelte.ts';
+    import {appState} from '../AppState.svelte';
 </script>
 
 <button onclick={appState.setVisibleView([0, 0], 0)}>
@@ -11,7 +11,7 @@
         position: absolute;
         z-index: 10;
         left: 0.6em;
-        top: 20.5em;
+        top: 22.5em;
         background-color: #1A73E8;
         border-radius: 5px;
         opacity: 0.8;

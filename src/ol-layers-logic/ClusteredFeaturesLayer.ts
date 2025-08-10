@@ -89,7 +89,7 @@ abstract class ClusteredFeaturesLayer {
      * Called when a feature of this layer has been clicked.
      * This method should be overriden by the child classes.
      */
-    abstract onFeatureClick(feature: any, coordinates: any, map: any, overlay: any): void;
+    abstract onFeatureClick(feature: any, coordinates: any): void;
 
     abstract get olLayer(): BaseLayer;
 }

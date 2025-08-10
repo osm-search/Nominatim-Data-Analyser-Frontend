@@ -1,6 +1,6 @@
 <script lang='ts'>
     import type ILayer from '../../model/ILayer';
-    import {appState} from '../../AppState.svelte.ts';
+    import {appState} from '../../AppState.svelte';
     import LayerDocumentationEntry from './LayerDocumentationEntry.svelte';
     import URLStateManager from '../../URLStateManager';
 

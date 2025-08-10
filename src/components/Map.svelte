@@ -10,7 +10,7 @@
     import BaseLayer from 'ol/layer/Base';
     import {Geometry} from 'ol/geom';
     import ClusteredFeaturesLayer from '../ol-layers-logic/ClusteredFeaturesLayer';
-    import {appState} from '../AppState.svelte.ts';
+    import {appState} from '../AppState.svelte';
     import Popup from './Popup.svelte';
     import URLStateManager from '../URLStateManager';
     import ResetPositionControl from './ResetPositionControl.svelte';

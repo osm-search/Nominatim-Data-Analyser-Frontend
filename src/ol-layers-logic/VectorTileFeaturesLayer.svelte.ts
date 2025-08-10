@@ -7,7 +7,7 @@ import MVT from 'ol/format/MVT';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
 import type ILayer from '../model/ILayer';
 import {Point} from 'ol/geom';
-import {appState} from '../AppState.svelte.ts';
+import {appState} from '../AppState.svelte';
 
 /**
  * Handles the logic for a features layer with a VectorTile source.
@@ -32,7 +32,7 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
      * The current date is added to the source_url in order to avoid caching by
      * the browser or server.
      */
-    get olLayer(): VectorTileLayer {
+    get olLayer() {
         return new VectorTileLayer({
             source: new VectorTileSource({
                 format: new MVT({

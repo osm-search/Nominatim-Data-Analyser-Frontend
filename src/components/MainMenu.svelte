@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import {appState} from '../AppState.svelte.ts';
+    import {appState} from '../AppState.svelte';
     import LayersList from './layers/LayersList.svelte';
 
     let isMenuOpen = $state(true);

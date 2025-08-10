@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import {appState} from '../AppState.svelte.ts';
+    import {appState} from '../AppState.svelte';
     import {Overlay} from 'ol';
     import {onMount} from 'svelte';
 

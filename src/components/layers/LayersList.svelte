@@ -5,7 +5,7 @@
     import {onMount} from 'svelte';
     import Spinner from '../Spinner.svelte';
     import Layer from './Layer.svelte';
-    import {appState} from '../../AppState.svelte.ts';
+    import {appState} from '../../AppState.svelte';
     import URLStateManager from '../../URLStateManager';
 
     let allLayers: ILayer[] | undefined = $state();
