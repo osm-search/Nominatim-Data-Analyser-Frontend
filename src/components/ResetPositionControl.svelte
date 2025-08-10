@@ -11,7 +11,7 @@
     }
 </script>
 
-<button on:click={onClick}>
+<button onclick={onClick}>
     <img src='assets/icons/reset-icon.svg' alt='reset icon'/>
 </button>
 
