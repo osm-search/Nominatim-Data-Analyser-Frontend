@@ -5,11 +5,10 @@
     import {onMount} from 'svelte';
     import Spinner from '../Spinner.svelte';
     import Layer from './Layer.svelte';
-    import {selectedLayer} from '../../stores/layerStore';
+    import {appState} from '../../AppState.svelte';
     import URLStateManager from '../../URLStateManager';
 
-    let allLayers: ILayer[] = [];
-    let isLoading = true;
+    let allLayers: ILayer[] | undefined = $state();
 
     onMount(() => {
         loadLayers();
@@ -27,7 +26,6 @@
                 const layersList: ILayersList = await layersResponse.json();
                 loadEachLayer(requestInit, layersList).then((layers) => {
                     allLayers = layers;
-                    isLoading = false;
                     loadInitialSelectedLayer();
                 });
             }
@@ -53,18 +51,19 @@
     }
 
     function loadInitialSelectedLayer() {
-        if (Array.isArray(allLayers) && allLayers.length > 0) {
+        if (allLayers.length > 0) {
             const urlStateManager = URLStateManager.getInstance();
             if (urlStateManager.state.layerID) {
-                const layer = allLayers.find(l => l.id === decodeURI(urlStateManager.state.layerID));
-                selectedLayer.set(layer);
+                const stateLayer = decodeURI(urlStateManager.state.layerID);
+                const layer = allLayers.find(l => l.id === stateLayer);
+                appState.selectedLayer = layer;
             }
         }
     }
 </script>
 
 <div class='layers-list-wrapper'>
-    {#if isLoading}
+    {#if allLayers === undefined}
         <div class='layers-loading-indicator'>
             <Spinner/>
         </div>

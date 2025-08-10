@@ -5,14 +5,9 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
 import MVT from 'ol/format/MVT';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
-import {createXYZ} from 'ol/tilegrid';
 import type ILayer from '../model/ILayer';
 import {Point} from 'ol/geom';
-import VectorSource from 'ol/source/Vector';
-import VectorLayer from 'ol/layer/Vector';
-import OlMap from 'ol/Map';
-import {Overlay} from 'ol';
-import {objProperties} from '../stores/propertyStore';
+import {appState} from '../AppState.svelte';
 
 /**
  * Handles the logic for a features layer with a VectorTile source.
@@ -24,7 +19,7 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
         const getFeatureSize = (feature: Feature<Point>) => {
             if (feature.get('cluster')) {
                 return feature.get('point_count'); 
-            }else {
+            } else {
                 return 1;
             }
         }
@@ -37,14 +32,15 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
      * The current date is added to the source_url in order to avoid caching by
      * the browser or server.
      */
-    get olLayer(): VectorTileLayer {
+    get olLayer() {
         return new VectorTileLayer({
             source: new VectorTileSource({
                 format: new MVT({
                     featureClass: Feature
                 }),
-                maxZoom: 15,
-                url: this.source_url + '?time=' + new Date().getTime()
+                maxZoom: 14,
+                url: this.source_url,
+                zDirection: -1
             }),
             style: (feature, resolution) => this.getStyle(feature),
             maxZoom: 19
@@ -58,27 +54,24 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
      * 
      * If the feature is not a cluster, the popup is opened with the well constructed content inside.
      */
-    onFeatureClick(feature: Feature<Point>, coordinates: number[],
-                   map: OlMap, overlay: Overlay): void
+    onFeatureClick(feature: Feature<Point>, coordinates: number[]): void
     {
-        if (feature.get('cluster')){
-            map.getView().animate({
-                center: coordinates,
-                zoom: feature.get('clusterExpansionZoom'),
-                duration: 1000
-            })
+        if (feature.get('cluster')) {
+            const view = appState.map.getView();
+            if (view) {
+                view.animate({
+                    center: coordinates,
+                    zoom: Math.max(feature.get('clusterExpansionZoom'),
+                                   (view.getZoom() || 0) + 1),
+                    duration: 1000
+                });
+            }
         } else {
-            objProperties.set({properties: this.getFeatureProperties(feature),
-                               coordinates: coordinates});
-            overlay.setPosition(coordinates); 
+            appState.selectedFeature = {
+                properties: feature.getProperties(),
+                coordinates: coordinates
+            };
         }
-    }
-
-    /**
-     * Returns the properties of the given feature object.
-     */
-    getFeatureProperties(feature: Feature<Point>): {[key: string]: any} {
-        return feature.getProperties();
     }
 }
 

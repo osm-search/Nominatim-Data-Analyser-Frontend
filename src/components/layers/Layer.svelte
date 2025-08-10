@@ -1,24 +1,25 @@
 <script lang='ts'>
     import type ILayer from '../../model/ILayer';
-    import {selectedLayer} from '../../stores/layerStore';
+    import {appState} from '../../AppState.svelte';
     import LayerDocumentationEntry from './LayerDocumentationEntry.svelte';
+    import URLStateManager from '../../URLStateManager';
 
-    export let layer: ILayer;
-    let isOpen = false;
-
-    selectedLayer.subscribe((selectedLayer) => {
-        isOpen = selectedLayer === layer;
-    })
+    let {layer} : {layer: ILayer} = $props();
+    let isOpen = $derived(layer == appState.selectedLayer);
 
     function setSelectedLayer() {
-        selectedLayer.update((selectedLayer) => {
-            return selectedLayer === layer ? null : layer;
-        })
+        if (isOpen) {
+            appState.selectedLayer = null;
+            URLStateManager.getInstance().setLayerState(null);
+        } else {
+            appState.selectedLayer = layer;
+            URLStateManager.getInstance().setLayerState(layer.id);
+        }
     }
 </script>
 
 <div class={`layer-wrapper ${isOpen ? 'layer-toggle' : ''}`}>
-    <div class='layer-title-arrow-wrapper' on:click={setSelectedLayer}>
+    <button class='layer-title-arrow-wrapper' title={isOpen ? 'Click to close' : 'Click to select'} onclick={setSelectedLayer}>
         <h3>{layer.name}</h3>
         <div class="flex-one"></div>
         <img
@@ -26,7 +27,7 @@
             alt='layer arrow icon'
             src={isOpen ? 'assets/icons/arrow-down-icon.svg' : 'assets/icons/arrow-right-icon.svg'}
         />
-    </div>
+    </button>
     <div class={`layer-data-wrapper ${isOpen ? 'layer-data-toggle' : ''}`}>
         <LayerDocumentationEntry layer={layer} docEntry='description'/>
         <LayerDocumentationEntry layer={layer} docEntry='why_problem'/>
@@ -58,9 +59,11 @@
     }
 
     .layer-title-arrow-wrapper {
+        font-size: 1em;
         display: flex;
         cursor: pointer;
         align-items: center;
+        width: 100%;
     }
 
     .layer-wrapper h3 {

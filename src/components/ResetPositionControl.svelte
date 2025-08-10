@@ -1,17 +1,8 @@
 <script lang='ts'>
-    import {map} from '../stores/mapStore';
-    import {get} from 'svelte/store';
-    import {View} from 'ol';
-
-    function onClick() {
-        get(map).setView(new View({
-            center: [0, 0],
-            zoom: 0
-        }));
-    }
+    import {appState} from '../AppState.svelte';
 </script>
 
-<button on:click={onClick}>
+<button onclick={appState.setVisibleView([0, 0], 0)}>
     <img src='assets/icons/reset-icon.svg' alt='reset icon'/>
 </button>
 
@@ -20,7 +11,7 @@
         position: absolute;
         z-index: 10;
         left: 0.6em;
-        top: 20.5em;
+        top: 22.5em;
         background-color: #1A73E8;
         border-radius: 5px;
         opacity: 0.8;

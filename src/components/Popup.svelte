@@ -1,11 +1,12 @@
 <script lang='ts'>
-    import {objProperties} from '../stores/propertyStore';
+    import {appState} from '../AppState.svelte';
     import {Overlay} from 'ol';
     import {onMount} from 'svelte';
 
+    let { visible = $bindable() } : { visible: boolean } = $props();
+
     let popupHTMLDiv: HTMLDivElement;
-    let props: object[] = [];
-    export let overlay: Overlay | undefined;
+    let overlay: Overlay | undefined;
 
     /**
      * Filter containing all the keys which should be ignored when
@@ -26,15 +27,12 @@
                 duration: 250,
             },
         });
+        appState.map.addOverlay(overlay);
     })
 
-    function close() {
-        overlay.setPosition(undefined);
-    }
-
-
-    objProperties.subscribe((value) => {
-        if (value.properties) {
+    let props: object[] = $derived.by(() => {
+        const value = appState.selectedFeature;
+        if (value) {
             let newprops = [];
 
             for (let k in value.properties) {
@@ -59,24 +57,35 @@
                     }
                 }
             }
-            props = newprops;
-        } else {
-            props = [];
+            return newprops;
         }
-      }
-    );
+
+        return [];
+    });
+
+    $effect(() => {
+        if (appState.selectedFeature) {
+            overlay?.setPosition(appState.selectedFeature.coordinates);
+            visible = true;
+        }
+    });
+
+    $effect(() => {
+        if (!visible) {
+            overlay?.setPosition(undefined);
+        }
+    });
 </script>
 
 <div bind:this={popupHTMLDiv} class='ol-popup'>
     <div class='popup-header'>
         <p>Properties</p>
         <div class='flex-one'></div>
-        <img
+        <button title="Close" onclick={() => {visible = false}}><img
             src='assets/icons/cross-icon.svg'
             alt='close icon popup'
             class='ol-popup-close-icon'
-            on:click={close}
-        />
+        /></button>
     </div>
     <div class='ol-popup-content'>
       {#each props as prop}

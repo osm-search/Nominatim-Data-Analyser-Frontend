@@ -1,5 +1,5 @@
-import GeoJSONFeaturesLayer from "./GeoJSONFeaturesLayer";
-import VectorTileFeaturesLayer from "./VectorTileFeaturesLayer";
+import GeoJSONFeaturesLayer from './GeoJSONFeaturesLayer.svelte';
+import VectorTileFeaturesLayer from './VectorTileFeaturesLayer.svelte';
 import type ILayer from '../model/ILayer';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
 

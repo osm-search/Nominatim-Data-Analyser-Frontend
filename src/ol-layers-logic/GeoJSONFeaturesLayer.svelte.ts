@@ -5,12 +5,11 @@ import {Cluster} from 'ol/source';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
 import {createEmpty, extend, getCenter} from 'ol/extent';
 import type ILayer from '../model/ILayer';
-import {Feature, Overlay} from 'ol';
+import {Feature} from 'ol';
 import type {FeatureLike} from 'ol/Feature';
 import {Point} from 'ol/geom';
 import VectorSource from 'ol/source/Vector';
-import OlMap from 'ol/Map';
-import {objProperties} from '../stores/propertyStore';
+import {appState} from '../AppState.svelte';
 
 /**
  * Handles the logic for a features layer with a GeoJSON source.
@@ -29,12 +28,13 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
      * The current date is added to the source_url in order to avoid caching by
      * the browser or server.
      */
-    get olLayer(): VectorLayer<VectorSource> {
+    get olLayer() {
         return new VectorLayer({
             source: new Cluster({
                 distance: 50,
+                minDistance: 5,
                 source: new SourceVector({
-                    url: this.source_url + '?time=' + new Date().getTime(),
+                    url: this.source_url,
                     format: new GeoJSON()
                 }),
             }),
@@ -49,35 +49,29 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
      * 
      * If the feature is not a cluster, the popup is opened with the well constructed content inside.
      */
-    onFeatureClick(feature: Feature<Point>, coordinates: number[],
-                   map: OlMap, overlay: Overlay): void
+    onFeatureClick(feature: Feature<Point>, coordinates: number[]): void
     {
         const originalFeatures = feature.get('features');
-        if (originalFeatures.length > 1){
+        if (originalFeatures.length > 1) {
+            const view = appState.map.getView();
             const extent = createEmpty();
             originalFeatures.forEach(function(f: any, index: number, array: any){
                 extend(extent, f.getGeometry().getExtent());
             });
-            const resolution = map.getView().getResolutionForExtent(extent);
-            const targetZoom = map.getView().getZoomForResolution(resolution);
+            const resolution = view.getResolutionForExtent(extent);
+            const targetZoom = view.getZoomForResolution(resolution);
             const location = getCenter(extent);
-            map.getView().animate({
+            view.animate({
                 center: location,
-                zoom: targetZoom,
+                zoom: Math.max(targetZoom || 0, (view.getZoom() || 0) + 1),
                 duration: 1000
             })
         } else {
-            objProperties.set({properties: this.getFeatureProperties(feature),
-                               coordinates: coordinates});
-            overlay.setPosition(coordinates); 
+            appState.selectedFeature = {
+                properties: feature.get('features')[0].getProperties(),
+                coordinates: coordinates
+            };
         }
-    }
-
-    /**
-     * Returns the properties of the given feature object.
-     */
-    getFeatureProperties(feature: Feature<Point>): {[key: string]: any} {
-        return feature.get('features')[0].getProperties();
     }
 }
 
