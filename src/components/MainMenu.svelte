@@ -1,33 +1,15 @@
 <script lang='ts'>
     import {map} from '../stores/mapStore';
-    import {onDestroy, onMount} from 'svelte';
     import LayersList from './layers/LayersList.svelte';
 
-    let isMenuOpen = true;
-    let menuHTMLSection: HTMLElement;
+    let isMenuOpen = $state(true);
 
-    function updateMapWidth() {
+    function ontransitionend() {
         map.update((map) => {
             map.updateSize();
             return map;
         });
     }
-
-    function open() {
-        isMenuOpen = true;
-    }
-
-    function close() {
-        isMenuOpen = false;
-    }
-
-    onMount(() => {
-        menuHTMLSection.addEventListener('transitionend', updateMapWidth);
-    });
-
-    onDestroy(() => {
-        menuHTMLSection.removeEventListener('transitionend', updateMapWidth);
-    });
 </script>
 
 <div>
@@ -36,16 +18,16 @@
             <img
                 src='assets/icons/menu-icon.svg'
                 alt='menu icon' class='menu-icon absolute-menu-icon'
-                on:click={open}
+                onclick={() => {isMenuOpen = true}}
             />
         </div>
     {/if}
 
-    <section bind:this={menuHTMLSection} class={`main-menu-wrapper ${!isMenuOpen ? 'not-toggle' : ''}`}>
+    <section {ontransitionend} class={`main-menu-wrapper ${!isMenuOpen ? 'not-toggle' : ''}`}>
         <div class='menu-title-wrapper'>
             <h1>Nominatim QA</h1>
             <div class='flex-one'></div>
-            <img src='assets/icons/left-arrow-icon.svg' alt='menu icon' class='menu-icon' on:click={close}/>
+            <img src='assets/icons/left-arrow-icon.svg' alt='menu icon' class='menu-icon' onclick={() => {isMenuOpen = false}}/>
         </div>
         <p class='layers-label'>Layers:</p>
         <div class="scrollable">
