@@ -1,7 +1,7 @@
 <script lang='ts'>
     import {onMount} from 'svelte';
     import 'ol/ol.css';
-    import {Feature, Overlay, View} from "ol";
+    import {Feature, View} from "ol";
     import TileLayer from 'ol/layer/Tile';
     import {OSM} from 'ol/source';
     import {ZoomSlider} from 'ol/control';
@@ -15,7 +15,7 @@
     import URLStateManager from '../URLStateManager';
     import ResetPositionControl from './ResetPositionControl.svelte';
 
-    let overlay: Overlay | undefined;
+    let popupVisible: boolean = $state(false);
 
     let mapHTMLDiv: HTMLDivElement;
 
@@ -31,7 +31,6 @@
 
         const map = appState.map;
         map.addLayer(new TileLayer({source: new OSM()}));
-        map.addOverlay(overlay);
         map.setTarget(mapHTMLDiv);
         map.setView(new View({
                 center: urlState.viewCenter,
@@ -52,7 +51,7 @@
             currentOlFeaturesLayer = undefined;
             currentClusteredFeatureLayer = undefined;
         }
-        overlay?.setPosition(undefined);
+        popupVisible = false;
         if (selectedLayer) {
             currentClusteredFeatureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
             currentOlFeaturesLayer = currentClusteredFeatureLayer.olLayer;
@@ -61,26 +60,25 @@
     });
 
     function onMapClick(event) {
-        const map = appState.map;
         let hit = false;
 
-        overlay?.setPosition(undefined);
-
-        map.forEachFeatureAtPixel(
+        appState.map.forEachFeatureAtPixel(
             event.pixel,
             function (feature: Feature<Geometry>) {
                 //Only keep the first hit
                 if (!hit) {
                     hit = true;
-                    currentClusteredFeatureLayer?.onFeatureClick(
-                        feature, event.coordinate, map, overlay
-                    );
+                    currentClusteredFeatureLayer?.onFeatureClick(feature, event.coordinate);
                 }
             },
             {
                 hitTolerance: 3
             }
         );
+
+        if (!hit) {
+            popupVisible = false;
+        }
     }
 </script>
 
@@ -88,7 +86,7 @@
     <div bind:this={mapHTMLDiv} id='map'>
         <ResetPositionControl/>
     </div>
-    <Popup bind:overlay={overlay} />
+    <Popup bind:visible={popupVisible} />
 </section>
 
 <style>

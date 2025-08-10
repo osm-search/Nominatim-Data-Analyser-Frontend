@@ -5,11 +5,10 @@ import {Cluster} from 'ol/source';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
 import {createEmpty, extend, getCenter} from 'ol/extent';
 import type ILayer from '../model/ILayer';
-import {Feature, Overlay} from 'ol';
+import {Feature} from 'ol';
 import type {FeatureLike} from 'ol/Feature';
 import {Point} from 'ol/geom';
 import VectorSource from 'ol/source/Vector';
-import OlMap from 'ol/Map';
 import {appState} from '../AppState.svelte.ts';
 
 /**
@@ -49,19 +48,19 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
      * 
      * If the feature is not a cluster, the popup is opened with the well constructed content inside.
      */
-    onFeatureClick(feature: Feature<Point>, coordinates: number[],
-                   map: OlMap, overlay: Overlay): void
+    onFeatureClick(feature: Feature<Point>, coordinates: number[]): void
     {
         const originalFeatures = feature.get('features');
-        if (originalFeatures.length > 1){
+        if (originalFeatures.length > 1) {
+            const view = appState.map.getView();
             const extent = createEmpty();
             originalFeatures.forEach(function(f: any, index: number, array: any){
                 extend(extent, f.getGeometry().getExtent());
             });
-            const resolution = map.getView().getResolutionForExtent(extent);
-            const targetZoom = map.getView().getZoomForResolution(resolution);
+            const resolution = view.getResolutionForExtent(extent);
+            const targetZoom = view.getZoomForResolution(resolution);
             const location = getCenter(extent);
-            map.getView().animate({
+            view.animate({
                 center: location,
                 zoom: targetZoom,
                 duration: 1000
@@ -71,7 +70,6 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
                 properties: this.getFeatureProperties(feature),
                 coordinates: coordinates
             };
-            overlay.setPosition(coordinates); 
         }
     }
 

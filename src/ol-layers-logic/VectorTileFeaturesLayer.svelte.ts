@@ -5,11 +5,8 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
 import MVT from 'ol/format/MVT';
 import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
-import {createXYZ} from 'ol/tilegrid';
 import type ILayer from '../model/ILayer';
 import {Point} from 'ol/geom';
-import OlMap from 'ol/Map';
-import {Overlay} from 'ol';
 import {appState} from '../AppState.svelte.ts';
 
 /**
@@ -56,11 +53,10 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
      * 
      * If the feature is not a cluster, the popup is opened with the well constructed content inside.
      */
-    onFeatureClick(feature: Feature<Point>, coordinates: number[],
-                   map: OlMap, overlay: Overlay): void
+    onFeatureClick(feature: Feature<Point>, coordinates: number[]): void
     {
         if (feature.get('cluster')){
-            map.getView().animate({
+            appState.map.getView().animate({
                 center: coordinates,
                 zoom: feature.get('clusterExpansionZoom'),
                 duration: 1000
@@ -70,7 +66,6 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
                 properties: feature.getProperties(),
                 coordinates: coordinates
             };
-            overlay.setPosition(coordinates); 
         }
     }
 }

@@ -3,9 +3,10 @@
     import {Overlay} from 'ol';
     import {onMount} from 'svelte';
 
-    let { overlay = $bindable() } : { overlay: Overlay } = $props();
+    let { visible = $bindable() } : { visible: boolean } = $props();
 
     let popupHTMLDiv: HTMLDivElement;
+    let overlay: Overlay | undefined;
 
     /**
      * Filter containing all the keys which should be ignored when
@@ -26,11 +27,8 @@
                 duration: 250,
             },
         });
+        appState.map.addOverlay(overlay);
     })
-
-    function close() {
-        overlay.setPosition(undefined);
-    }
 
     let props: object[] = $derived.by(() => {
         const value = appState.selectedFeature;
@@ -64,6 +62,19 @@
 
         return [];
     });
+
+    $effect(() => {
+        if (appState.selectedFeature) {
+            overlay?.setPosition(appState.selectedFeature.coordinates);
+            visible = true;
+        }
+    });
+
+    $effect(() => {
+        if (!visible) {
+            overlay?.setPosition(undefined);
+        }
+    });
 </script>
 
 <div bind:this={popupHTMLDiv} class='ol-popup'>
@@ -74,7 +85,7 @@
             src='assets/icons/cross-icon.svg'
             alt='close icon popup'
             class='ol-popup-close-icon'
-            onclick={close}
+            onclick={() => {visible = false}}
         />
     </div>
     <div class='ol-popup-content'>
