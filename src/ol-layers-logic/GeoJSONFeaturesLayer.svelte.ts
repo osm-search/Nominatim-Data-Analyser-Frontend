@@ -10,7 +10,7 @@ import type {FeatureLike} from 'ol/Feature';
 import {Point} from 'ol/geom';
 import VectorSource from 'ol/source/Vector';
 import OlMap from 'ol/Map';
-import {objProperties} from '../stores/propertyStore';
+import {appState} from '../AppState.svelte.ts';
 
 /**
  * Handles the logic for a features layer with a GeoJSON source.
@@ -67,8 +67,10 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
                 duration: 1000
             })
         } else {
-            objProperties.set({properties: this.getFeatureProperties(feature),
-                               coordinates: coordinates});
+            appState.selectedFeature = {
+                properties: this.getFeatureProperties(feature),
+                coordinates: coordinates
+            };
             overlay.setPosition(coordinates); 
         }
     }

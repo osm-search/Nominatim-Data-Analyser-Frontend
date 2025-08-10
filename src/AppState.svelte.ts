@@ -1,9 +1,11 @@
 import {Map} from 'ol';
 import {defaults as defaultControls} from 'ol/control';
 import type ILayer from './model/ILayer';
+import type IProperty from './model/IProperty';
 
 class AppState {
-    selectedLayer: ILayer | undefined = $state.raw();
+    selectedLayer: ILayer | null = $state.raw(null);
+    selectedFeature: IProperty | null = $state.raw(null);
 
     #olMap : Map;
 

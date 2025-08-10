@@ -1,11 +1,9 @@
 <script lang='ts'>
-    import {objProperties} from '../stores/propertyStore';
+    import {appState} from '../AppState.svelte.ts';
     import {Overlay} from 'ol';
     import {onMount} from 'svelte';
 
     let { overlay = $bindable() } : { overlay: Overlay } = $props();
-
-    let props: object[] = $state([]);
 
     let popupHTMLDiv: HTMLDivElement;
 
@@ -34,9 +32,9 @@
         overlay.setPosition(undefined);
     }
 
-
-    objProperties.subscribe((value) => {
-        if (value.properties) {
+    let props: object[] = $derived.by(() => {
+        const value = appState.selectedFeature;
+        if (value) {
             let newprops = [];
 
             for (let k in value.properties) {
@@ -61,12 +59,11 @@
                     }
                 }
             }
-            props = newprops;
-        } else {
-            props = [];
+            return newprops;
         }
-      }
-    );
+
+        return [];
+    });
 </script>
 
 <div bind:this={popupHTMLDiv} class='ol-popup'>

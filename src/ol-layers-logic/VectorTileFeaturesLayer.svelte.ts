@@ -8,11 +8,9 @@ import ClusteredFeaturesLayer from './ClusteredFeaturesLayer';
 import {createXYZ} from 'ol/tilegrid';
 import type ILayer from '../model/ILayer';
 import {Point} from 'ol/geom';
-import VectorSource from 'ol/source/Vector';
-import VectorLayer from 'ol/layer/Vector';
 import OlMap from 'ol/Map';
 import {Overlay} from 'ol';
-import {objProperties} from '../stores/propertyStore';
+import {appState} from '../AppState.svelte.ts';
 
 /**
  * Handles the logic for a features layer with a VectorTile source.
@@ -24,7 +22,7 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
         const getFeatureSize = (feature: Feature<Point>) => {
             if (feature.get('cluster')) {
                 return feature.get('point_count'); 
-            }else {
+            } else {
                 return 1;
             }
         }
@@ -68,17 +66,12 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
                 duration: 1000
             })
         } else {
-            objProperties.set({properties: this.getFeatureProperties(feature),
-                               coordinates: coordinates});
+            appState.selectedFeature = {
+                properties: feature.getProperties(),
+                coordinates: coordinates
+            };
             overlay.setPosition(coordinates); 
         }
-    }
-
-    /**
-     * Returns the properties of the given feature object.
-     */
-    getFeatureProperties(feature: Feature<Point>): {[key: string]: any} {
-        return feature.getProperties();
     }
 }
 

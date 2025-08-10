@@ -6,7 +6,7 @@
     import {OSM} from 'ol/source';
     import {ZoomSlider} from 'ol/control';
     import {useGeographic} from 'ol/proj';
-    import FeaturesLayerFactory from '../ol-layers-logic/FeaturesLayerFactory';
+    import FeaturesLayerFactory from '../ol-layers-logic/FeaturesLayerFactory.svelte.ts';
     import BaseLayer from 'ol/layer/Base';
     import {Geometry} from 'ol/geom';
     import ClusteredFeaturesLayer from '../ol-layers-logic/ClusteredFeaturesLayer';
