@@ -1,11 +1,11 @@
 <script lang='ts'>
     import Markdown from 'svelte-exmarkdown'
+    import type ILayer from '../../model/ILayer';
+
     /*
     * Map the keys of the layer documentation to a more
     * elaborate value.
     */
-    import type ILayer from '../../model/ILayer';
-
     const DOC_TITLE_MAPPING = {
         'description': 'Description of the layer',
         'why_problem': 'Why are these data wrong',
@@ -13,16 +13,17 @@
         'last_update': 'Last update of the layer'
     };
 
-    export let layer: ILayer;
-    export let docEntry: string;
-    const docTitle = docEntry in DOC_TITLE_MAPPING ? DOC_TITLE_MAPPING[docEntry] : docEntry;
+    let {layer, docEntry} : {
+        layer: ILayer;
+        docEntry: string;
+    } = $props();
 </script>
 
-{#if layer.doc && docEntry in layer.doc}
+{#if layer?.doc[docEntry]}
     <div>
-        <p class='doc-title'>{docTitle}:</p>
+        <p class='doc-title'>{DOC_TITLE_MAPPING[docEntry] || docEntry}:</p>
         <div class='doc-content'>
-            <Markdown md={layer['doc'][docEntry]}/>
+            <Markdown md={layer.doc[docEntry]}/>
         </div>
     </div>
 {/if}
