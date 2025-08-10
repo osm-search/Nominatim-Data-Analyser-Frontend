@@ -81,12 +81,11 @@
     <div class='popup-header'>
         <p>Properties</p>
         <div class='flex-one'></div>
-        <img
+        <button title="Close" onclick={() => {visible = false}}><img
             src='assets/icons/cross-icon.svg'
             alt='close icon popup'
             class='ol-popup-close-icon'
-            onclick={() => {visible = false}}
-        />
+        /></button>
     </div>
     <div class='ol-popup-content'>
       {#each props as prop}

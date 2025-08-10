@@ -19,7 +19,7 @@
 </script>
 
 <div class={`layer-wrapper ${isOpen ? 'layer-toggle' : ''}`}>
-    <div class='layer-title-arrow-wrapper' onclick={setSelectedLayer}>
+    <button class='layer-title-arrow-wrapper' title={isOpen ? 'Click to close' : 'Click to select'} onclick={setSelectedLayer}>
         <h3>{layer.name}</h3>
         <div class="flex-one"></div>
         <img
@@ -27,7 +27,7 @@
             alt='layer arrow icon'
             src={isOpen ? 'assets/icons/arrow-down-icon.svg' : 'assets/icons/arrow-right-icon.svg'}
         />
-    </div>
+    </button>
     <div class={`layer-data-wrapper ${isOpen ? 'layer-data-toggle' : ''}`}>
         <LayerDocumentationEntry layer={layer} docEntry='description'/>
         <LayerDocumentationEntry layer={layer} docEntry='why_problem'/>
@@ -59,9 +59,11 @@
     }
 
     .layer-title-arrow-wrapper {
+        font-size: 1em;
         display: flex;
         cursor: pointer;
         align-items: center;
+        width: 100%;
     }
 
     .layer-wrapper h3 {
