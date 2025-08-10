@@ -2,7 +2,7 @@
     import LocalStorageKeys from '../local-storage/localStorageKeys';
     import {onMount} from 'svelte';
 
-    let isShown = false;
+    let isShown = $state(false);
 
     onMount(() => {
         if (localStorage.getItem(LocalStorageKeys.IS_INFO_PANEL_HIDDEN) === 'false') {
@@ -27,7 +27,7 @@
             <div class='information-panel-title-wrapper'>
                 <h2>Welcome to the <span class='blue-text'>Nominatim QA</span> Tool!</h2>
                 <div class='flex-one'></div>
-                <button class='information-panel-close-button' on:click={close}>
+                <button class='information-panel-close-button' onclick={close}>
                     <img src='assets/icons/cross-icon.svg' alt='close icon' class='information-panel-close-icon'/>
                 </button>
             </div>
@@ -43,7 +43,7 @@
       </div>
     </section>
 {:else}
-    <button class='open-info-panel-button' on:click={open}>
+    <button class='open-info-panel-button' onclick={open}>
         ?
     </button>
 {/if}
