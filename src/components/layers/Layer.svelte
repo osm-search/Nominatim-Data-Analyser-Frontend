@@ -3,8 +3,9 @@
     import {selectedLayer} from '../../stores/layerStore';
     import LayerDocumentationEntry from './LayerDocumentationEntry.svelte';
 
-    export let layer: ILayer;
-    let isOpen = false;
+    let {layer} : {layer: ILayer} = $props();
+
+    let isOpen = $state(false);
 
     selectedLayer.subscribe((selectedLayer) => {
         isOpen = selectedLayer === layer;
@@ -18,7 +19,7 @@
 </script>
 
 <div class={`layer-wrapper ${isOpen ? 'layer-toggle' : ''}`}>
-    <div class='layer-title-arrow-wrapper' on:click={setSelectedLayer}>
+    <div class='layer-title-arrow-wrapper' onclick={setSelectedLayer}>
         <h3>{layer.name}</h3>
         <div class="flex-one"></div>
         <img
