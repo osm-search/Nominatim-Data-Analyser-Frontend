@@ -8,8 +8,7 @@
     import {selectedLayer} from '../../stores/layerStore';
     import URLStateManager from '../../URLStateManager';
 
-    let allLayers: ILayer[] = [];
-    let isLoading = true;
+    let allLayers: ILayer[] | undefined = $state();
 
     onMount(() => {
         loadLayers();
@@ -27,7 +26,6 @@
                 const layersList: ILayersList = await layersResponse.json();
                 loadEachLayer(requestInit, layersList).then((layers) => {
                     allLayers = layers;
-                    isLoading = false;
                     loadInitialSelectedLayer();
                 });
             }
@@ -64,7 +62,7 @@
 </script>
 
 <div class='layers-list-wrapper'>
-    {#if isLoading}
+    {#if allLayers === undefined}
         <div class='layers-loading-indicator'>
             <Spinner/>
         </div>
