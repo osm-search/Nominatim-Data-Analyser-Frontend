@@ -2,10 +2,9 @@
     import {onMount} from 'svelte';
     import 'ol/ol.css';
     import {Feature, Overlay, View} from "ol";
-    import Map from 'ol/Map';
     import TileLayer from 'ol/layer/Tile';
     import {OSM} from 'ol/source';
-    import {defaults as defaultControls, ZoomSlider} from 'ol/control';
+    import {ZoomSlider} from 'ol/control';
     import {useGeographic} from 'ol/proj';
     import {selectedLayer} from '../stores/layerStore';
     import type ILayer from '../model/ILayer';
@@ -13,13 +12,11 @@
     import BaseLayer from 'ol/layer/Base';
     import {Geometry} from 'ol/geom';
     import ClusteredFeaturesLayer from '../ol-layers-logic/ClusteredFeaturesLayer';
-    import OlMap from 'ol/Map';
-    import {map} from '../stores/mapStore';
+    import {appState} from '../AppState.svelte.ts';
     import Popup from './Popup.svelte';
     import URLStateManager from '../URLStateManager';
     import ResetPositionControl from './ResetPositionControl.svelte';
 
-    let localMap: OlMap;
     let overlay: Overlay | undefined;
 
     let mapHTMLDiv: HTMLDivElement;
@@ -32,34 +29,22 @@
         //the map view uses geographic coordinates (even if the view projection is not geographic).
         useGeographic();
 
-        localMap = new Map({
-            layers: [
-                new TileLayer({
-                    source: new OSM(),
-                })
-            ],
-            controls: defaultControls({
-                zoom: true,
-                attribution: true,
-                rotate: false
-            }),
-            overlays: [overlay],
-            target: mapHTMLDiv,
-            view: new View({
+        const map = appState.map;
+        map.addLayer(new TileLayer({source: new OSM()}));
+        map.addOverlay(overlay);
+        map.setTarget(mapHTMLDiv);
+        map.setView(new View({
                 center: [0, 0],
                 zoom: 0,
                 maxZoom: 19
-            })
-        });
+            }));
 
-        localMap.addControl(new ZoomSlider());
+        map.addControl(new ZoomSlider());
 
         //Manually set the map view from the initial state when the page just loaded.
         setMapViewFromState();
-        localMap.on('moveend', () => URLStateManager.getInstance().setMapState(localMap));
-        localMap.on('click', onMapClick);
-
-        map.set(localMap);
+        map.on('moveend', () => URLStateManager.getInstance().setMapState(map));
+        map.on('click', onMapClick);
     });
 
     let isFirstSelectedLayerUpdate = true;
@@ -70,7 +55,7 @@
         }
 
         if (currentOlFeaturesLayer) {
-            localMap.removeLayer(currentOlFeaturesLayer);
+            appState.map.removeLayer(currentOlFeaturesLayer);
             currentOlFeaturesLayer = undefined;
             currentClusteredFeatureLayer = undefined;
         }
@@ -79,7 +64,7 @@
             URLStateManager.getInstance().setLayerState(selectedLayer.id);
             currentClusteredFeatureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
             currentOlFeaturesLayer = currentClusteredFeatureLayer.olLayer;
-            localMap.addLayer(currentOlFeaturesLayer);
+            appState.map.addLayer(currentOlFeaturesLayer);
         }else {
             URLStateManager.getInstance().setLayerState(null);
         }
@@ -89,23 +74,24 @@
      * Set the map view center/zoom to the values stored in the URL state.
      */
     const setMapViewFromState = () => {
-        localMap.getView().setCenter(URLStateManager.getInstance().state.viewCenter);
-        localMap.getView().setZoom(URLStateManager.getInstance().state.viewZoom);
+        const urlState = URLStateManager.getInstance().state;
+        appState.setVisibleView(urlState.viewCenter, urlState.viewZoom);
     }
 
     function onMapClick(event) {
+        const map = appState.map;
         let hit = false;
 
         overlay.setPosition(undefined);
 
-        localMap.forEachFeatureAtPixel(
+        map.forEachFeatureAtPixel(
             event.pixel,
             function (feature: Feature<Geometry>) {
                 //Only keep the first hit
                 if (!hit) {
                     hit = true;
                     currentClusteredFeatureLayer?.onFeatureClick(
-                        feature, event.coordinate, localMap, overlay
+                        feature, event.coordinate, map, overlay
                     );
                 }
             },

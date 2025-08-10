@@ -1,15 +1,8 @@
 <script lang='ts'>
-    import {map} from '../stores/mapStore';
+    import {appState} from '../AppState.svelte.ts';
     import LayersList from './layers/LayersList.svelte';
 
     let isMenuOpen = $state(true);
-
-    function ontransitionend() {
-        map.update((map) => {
-            map.updateSize();
-            return map;
-        });
-    }
 </script>
 
 <div>
@@ -23,7 +16,7 @@
         </div>
     {/if}
 
-    <section {ontransitionend} class={`main-menu-wrapper ${!isMenuOpen ? 'not-toggle' : ''}`}>
+    <section ontransitionend={appState.map.updateSize()} class={`main-menu-wrapper ${!isMenuOpen ? 'not-toggle' : ''}`}>
         <div class='menu-title-wrapper'>
             <h1>Nominatim QA</h1>
             <div class='flex-one'></div>
