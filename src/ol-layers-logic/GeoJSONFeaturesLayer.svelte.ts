@@ -32,6 +32,7 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
         return new VectorLayer({
             source: new Cluster({
                 distance: 50,
+                minDistance: 5,
                 source: new SourceVector({
                     url: this.source_url,
                     format: new GeoJSON()

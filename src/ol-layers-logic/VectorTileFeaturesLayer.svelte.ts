@@ -38,8 +38,9 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
                 format: new MVT({
                     featureClass: Feature
                 }),
-                maxZoom: 15,
-                url: this.source_url
+                maxZoom: 14,
+                url: this.source_url,
+                zDirection: -1
             }),
             style: (feature, resolution) => this.getStyle(feature),
             maxZoom: 19
