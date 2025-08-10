@@ -3,9 +3,11 @@
     import {Overlay} from 'ol';
     import {onMount} from 'svelte';
 
+    let { overlay = $bindable() } : { overlay: Overlay } = $props();
+
+    let props: object[] = $state([]);
+
     let popupHTMLDiv: HTMLDivElement;
-    let props: object[] = [];
-    export let overlay: Overlay | undefined;
 
     /**
      * Filter containing all the keys which should be ignored when
@@ -75,7 +77,7 @@
             src='assets/icons/cross-icon.svg'
             alt='close icon popup'
             class='ol-popup-close-icon'
-            on:click={close}
+            onclick={close}
         />
     </div>
     <div class='ol-popup-content'>
