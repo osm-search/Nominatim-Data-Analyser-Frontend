@@ -33,7 +33,7 @@ class GeoJSONFeaturesLayer extends ClusteredFeaturesLayer {
             source: new Cluster({
                 distance: 50,
                 source: new SourceVector({
-                    url: this.source_url + '?time=' + new Date().getTime(),
+                    url: this.source_url,
                     format: new GeoJSON()
                 }),
             }),

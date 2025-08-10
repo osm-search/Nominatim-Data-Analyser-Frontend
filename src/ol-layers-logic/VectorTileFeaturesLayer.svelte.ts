@@ -39,7 +39,7 @@ class VectorTileFeaturesLayer extends ClusteredFeaturesLayer {
                     featureClass: Feature
                 }),
                 maxZoom: 15,
-                url: this.source_url + '?time=' + new Date().getTime()
+                url: this.source_url
             }),
             style: (feature, resolution) => this.getStyle(feature),
             maxZoom: 19
