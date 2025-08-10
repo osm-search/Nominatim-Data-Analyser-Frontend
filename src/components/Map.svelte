@@ -6,8 +6,6 @@
     import {OSM} from 'ol/source';
     import {ZoomSlider} from 'ol/control';
     import {useGeographic} from 'ol/proj';
-    import {selectedLayer} from '../stores/layerStore';
-    import type ILayer from '../model/ILayer';
     import FeaturesLayerFactory from '../ol-layers-logic/FeaturesLayerFactory';
     import BaseLayer from 'ol/layer/Base';
     import {Geometry} from 'ol/geom';
@@ -29,31 +27,26 @@
         //the map view uses geographic coordinates (even if the view projection is not geographic).
         useGeographic();
 
+        const urlState = URLStateManager.getInstance().state;
+
         const map = appState.map;
         map.addLayer(new TileLayer({source: new OSM()}));
         map.addOverlay(overlay);
         map.setTarget(mapHTMLDiv);
         map.setView(new View({
-                center: [0, 0],
-                zoom: 0,
+                center: urlState.viewCenter,
+                zoom: urlState.viewZoom,
                 maxZoom: 19
             }));
 
         map.addControl(new ZoomSlider());
 
-        //Manually set the map view from the initial state when the page just loaded.
-        setMapViewFromState();
         map.on('moveend', () => URLStateManager.getInstance().setMapState(map));
         map.on('click', onMapClick);
     });
 
-    let isFirstSelectedLayerUpdate = true;
-    selectedLayer.subscribe((selectedLayer: ILayer) => {
-        if (isFirstSelectedLayerUpdate) {
-            isFirstSelectedLayerUpdate = false;
-            return;
-        }
-
+    $effect(() => {
+        const selectedLayer = appState.selectedLayer;
         if (currentOlFeaturesLayer) {
             appState.map.removeLayer(currentOlFeaturesLayer);
             currentOlFeaturesLayer = undefined;
@@ -61,28 +54,17 @@
         }
         overlay?.setPosition(undefined);
         if (selectedLayer) {
-            URLStateManager.getInstance().setLayerState(selectedLayer.id);
             currentClusteredFeatureLayer = FeaturesLayerFactory.constructFeaturesLayer(selectedLayer)
             currentOlFeaturesLayer = currentClusteredFeatureLayer.olLayer;
             appState.map.addLayer(currentOlFeaturesLayer);
-        }else {
-            URLStateManager.getInstance().setLayerState(null);
         }
     });
-
-    /**
-     * Set the map view center/zoom to the values stored in the URL state.
-     */
-    const setMapViewFromState = () => {
-        const urlState = URLStateManager.getInstance().state;
-        appState.setVisibleView(urlState.viewCenter, urlState.viewZoom);
-    }
 
     function onMapClick(event) {
         const map = appState.map;
         let hit = false;
 
-        overlay.setPosition(undefined);
+        overlay?.setPosition(undefined);
 
         map.forEachFeatureAtPixel(
             event.pixel,

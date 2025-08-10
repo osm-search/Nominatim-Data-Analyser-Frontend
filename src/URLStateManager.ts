@@ -3,7 +3,7 @@ import OlMap from 'ol/Map';
 
 interface URLState {
     viewZoom: number;
-    layerID: string;
+    layerID: string | null;
     viewCenter: number[];
 }
 
@@ -16,7 +16,7 @@ export default class URLStateManager {
         this.state = {
             viewZoom: 0,
             viewCenter: [0, 0],
-            layerID: ''
+            layerID: null
         }
         this._loadState();
         return this;

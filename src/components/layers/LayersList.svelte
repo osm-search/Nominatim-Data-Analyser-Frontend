@@ -5,7 +5,7 @@
     import {onMount} from 'svelte';
     import Spinner from '../Spinner.svelte';
     import Layer from './Layer.svelte';
-    import {selectedLayer} from '../../stores/layerStore';
+    import {appState} from '../../AppState.svelte.js';
     import URLStateManager from '../../URLStateManager';
 
     let allLayers: ILayer[] | undefined = $state();
@@ -51,11 +51,12 @@
     }
 
     function loadInitialSelectedLayer() {
-        if (Array.isArray(allLayers) && allLayers.length > 0) {
+        if (allLayers.length > 0) {
             const urlStateManager = URLStateManager.getInstance();
             if (urlStateManager.state.layerID) {
-                const layer = allLayers.find(l => l.id === decodeURI(urlStateManager.state.layerID));
-                selectedLayer.set(layer);
+                const stateLayer = decodeURI(urlStateManager.state.layerID);
+                const layer = allLayers.find(l => l.id === stateLayer);
+                appState.selectedLayer = layer;
             }
         }
     }

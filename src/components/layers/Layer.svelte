@@ -1,20 +1,20 @@
 <script lang='ts'>
     import type ILayer from '../../model/ILayer';
-    import {selectedLayer} from '../../stores/layerStore';
+    import {appState} from '../../AppState.svelte.ts';
     import LayerDocumentationEntry from './LayerDocumentationEntry.svelte';
+    import URLStateManager from '../../URLStateManager';
 
     let {layer} : {layer: ILayer} = $props();
-
-    let isOpen = $state(false);
-
-    selectedLayer.subscribe((selectedLayer) => {
-        isOpen = selectedLayer === layer;
-    })
+    let isOpen = $derived(layer == appState.selectedLayer);
 
     function setSelectedLayer() {
-        selectedLayer.update((selectedLayer) => {
-            return selectedLayer === layer ? null : layer;
-        })
+        if (isOpen) {
+            appState.selectedLayer = null;
+            URLStateManager.getInstance().setLayerState(null);
+        } else {
+            appState.selectedLayer = layer;
+            URLStateManager.getInstance().setLayerState(layer.id);
+        }
     }
 </script>
 

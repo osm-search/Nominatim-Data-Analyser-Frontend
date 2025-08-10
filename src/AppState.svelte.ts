@@ -3,7 +3,7 @@ import {defaults as defaultControls} from 'ol/control';
 import type ILayer from './model/ILayer';
 
 class AppState {
-    selectedLayer: ILayer | undefined = $state.raw()
+    selectedLayer: ILayer | undefined = $state.raw();
 
     #olMap : Map;
 
